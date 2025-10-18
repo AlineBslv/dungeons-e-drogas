@@ -3,6 +3,9 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const rateLimit = require("express-rate-limit");
 const chatRoutes = require("./routes/chat.js");
+const geminiRoutes = require("./routes/gemini.js");
+const uploadRoutes = require("./routes/upload.js");
+const searchRoutes = require("./routes/search.js");
 
 dotenv.config();
 
@@ -22,9 +25,12 @@ const limiter = rateLimit({
 app.use("/chat", limiter);
 
 // Rotas
-app.get("/", (req, res) => res.send("🔥 Dungeons e Drogas API online"));
+app.get("/", (req, res) => res.send("🧙‍♂️ Servidor ativo e conectado ao portal do Gemini"));
 app.get("/ping", (_, res) => res.json({ message: "pong" }));
 app.use("/chat", chatRoutes);
+app.use("/gemini", geminiRoutes);
+app.use("/upload", uploadRoutes);
+app.use("/search", searchRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

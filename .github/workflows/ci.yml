@@ -17,24 +17,24 @@ jobs:
         working-directory: ./frontend
 
     steps:
-      - name: =� Checkout code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: =� Setup Node.js
+      - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: './frontend/package-lock.json'
 
-      - name: =� Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: = Run ESLint
+      - name: 🔍 Run ESLint
         run: npm run lint --if-present
         continue-on-error: true
 
-      - name: <� Build project
+      - name: 🏗️ Build project
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
@@ -45,8 +45,8 @@ jobs:
           NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
           NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
 
-      - name:  Build successful
-        run: echo "( Frontend build completed successfully!"
+      - name: ✅ Build successful
+        run: echo "✓ Frontend build completed successfully!"
 
   # Job 2: Build e test do Backend
   backend:
@@ -58,25 +58,25 @@ jobs:
         working-directory: ./backend
 
     steps:
-      - name: =� Checkout code
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: =� Setup Node.js
+      - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: './backend/package-lock.json'
 
-      - name: =� Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: = Run tests (if available)
+      - name: 🧪 Run tests (if available)
         run: npm test --if-present
         continue-on-error: true
 
-      - name:  Backend validated
-        run: echo "( Backend validation completed successfully!"
+      - name: ✅ Backend validated
+        run: echo "✓ Backend validation completed successfully!"
 
   # Job 3: Status check geral
   status-check:
@@ -85,8 +85,8 @@ jobs:
     needs: [frontend, backend]
 
     steps:
-      - name:  All checks passed
+      - name: ✅ All checks passed
         run: |
-          echo "<� CI Pipeline completed successfully!"
-          echo "( Frontend: "
-          echo "( Backend: "
+          echo "🎉 CI Pipeline completed successfully!"
+          echo "✓ Frontend: ✅"
+          echo "✓ Backend: ✅"
