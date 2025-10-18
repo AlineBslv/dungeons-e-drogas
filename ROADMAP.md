@@ -1,8 +1,8 @@
 # 🗺️ Roadmap de Desenvolvimento - Dungeons e Drogas
 
-**Versão:** 1.0
+**Versão:** 1.1
 **Última atualização:** 2025-10-18
-**Objetivo:** MVP Funcional sem Multiplayer Real-time
+**Objetivo:** MVP Funcional com Landing Page e sem Multiplayer Real-time
 
 ---
 
@@ -66,9 +66,132 @@ M  backend/package.json
 
 ---
 
-## 🎯 Roadmap Prioritizado (5 Sprints)
+## 🎯 Roadmap Prioritizado (6 Sprints)
 
-### **Sprint 1: Autenticação & Usuários** (Semanas 1-4)
+### **Sprint 0: Landing Page** (Semanas 1-2)
+
+#### Objetivo
+Criar landing page de alta conversão seguindo boas práticas de UX/UI para capturar interesse e leads antes do lançamento.
+
+#### Frontend - Tarefas
+
+**1. Estrutura da Landing Page**
+- Arquivo: `frontend/src/app/page.tsx` (substituir página atual)
+- Seções principais:
+  - **Hero Section** - Headline impactante + CTA
+  - **Features** - Principais diferenciais do produto
+  - **How it Works** - Fluxo de uso (Mestre e Jogador)
+  - **Screenshots/Demo** - Prévia da interface
+  - **Testimonials** - Depoimentos (futuro)
+  - **Pricing/Plans** - Planos (Mestre free/premium)
+  - **FAQ** - Perguntas frequentes
+  - **Footer** - Links + redes sociais
+
+**2. Boas Práticas de UX/UI**
+- Design responsivo (mobile-first)
+- Tema dark medieval consistente com a marca
+- Micro-interações (scroll animations, hover effects)
+- Performance otimizada (Core Web Vitals)
+- Acessibilidade (WCAG 2.1 AA)
+- SEO otimizado (meta tags, structured data)
+
+**3. Componentes da Landing**
+- `frontend/src/components/landing/HeroSection.tsx`
+  - Headline: "Onde a narrativa encontra a magia da IA"
+  - Subtitle: Descrição do valor único
+  - CTAs: "Começar como Mestre" / "Entrar como Jogador"
+  - Background animado (partículas, gradientes)
+
+- `frontend/src/components/landing/FeaturesGrid.tsx`
+  - Cards destacando:
+    - 🧙 Mestre Drogon (IA narradora)
+    - 🎲 Sistema simplificado de D&D
+    - 📚 Base de conhecimento oficial
+    - ⚙️ Contexto dinâmico adaptativo
+    - 🎨 Interface grimório medieval
+    - 📊 Painel do Mestre completo
+
+- `frontend/src/components/landing/HowItWorks.tsx`
+  - Timeline visual em 3 passos:
+    1. Crie sua campanha
+    2. Convide jogadores
+    3. Deixe a magia acontecer
+  - Screenshots ou ilustrações de cada etapa
+
+- `frontend/src/components/landing/DemoPreview.tsx`
+  - Carrossel de screenshots da aplicação
+  - Ou vídeo demo (futuro)
+  - Highlight das interfaces de Mestre e Jogador
+
+- `frontend/src/components/landing/PricingCards.tsx`
+  - Plano Gratuito:
+    - 1 campanha ativa
+    - Até 5 jogadores
+    - Chat com Drogon ilimitado
+    - Regras básicas de D&D
+  - Plano Premium (futuro):
+    - Campanhas ilimitadas
+    - Jogadores ilimitados
+    - Exportação de sessões
+    - Acesso antecipado a features
+
+- `frontend/src/components/landing/FAQ.tsx`
+  - Accordion com perguntas comuns
+  - Tópicos: O que é? Como funciona? É gratuito? Preciso conhecer D&D?
+
+- `frontend/src/components/landing/CTASection.tsx`
+  - Seção final de conversão
+  - Botão grande "Começar Agora"
+  - Badge: "100% Gratuito - Sem cartão de crédito"
+
+**4. Formulário de Waitlist (Opcional)**
+- Se produto não estiver pronto:
+  - Capturar email para notificar no lançamento
+  - Integração com Mailchimp/SendGrid
+  - Badge: "Seja um dos primeiros"
+
+**5. Analytics e Tracking**
+- Google Analytics 4
+- Hotjar (heatmaps e session recordings)
+- Conversão de CTAs
+- Scroll depth
+
+**6. SEO e Meta Tags**
+- Título: "Dungeons e Drogas - RPG Narrativo com IA"
+- Description otimizada (155-160 caracteres)
+- Open Graph para redes sociais
+- Favicon e app icons
+- Sitemap.xml
+
+#### Design Guidelines (A detalhar no desenvolvimento)
+- Paleta de cores dark medieval
+- Tipografia: Fontes com personalidade (serif para títulos, sans-serif para corpo)
+- Iconografia: Ícones customizados de grimório/fantasia
+- Imagens: Ilustrações de D&D, dados, mapas, pergaminhos
+- Animações: Sutis, não intrusivas (Framer Motion)
+
+#### Dependências Adicionais
+```json
+{
+  "react-intersection-observer": "^9.5.0",  // Scroll animations
+  "react-countup": "^6.5.0",                // Números animados
+  "swiper": "^11.0.0"                       // Carrossel de imagens
+}
+```
+
+#### Critérios de Aceite
+- [ ] Landing page responsiva (mobile, tablet, desktop)
+- [ ] Todas seções implementadas e estilizadas
+- [ ] CTAs clicáveis redirecionam para /register
+- [ ] Performance: Lighthouse score > 90
+- [ ] SEO: Meta tags completas
+- [ ] Animações suaves em scroll
+- [ ] FAQ funcional (accordion)
+- [ ] Footer com links para docs e redes sociais
+
+---
+
+### **Sprint 1: Autenticação & Usuários** (Semanas 3-6)
 
 #### Objetivo
 Implementar sistema completo de autenticação com Firebase Auth e gerenciamento de perfis (Mestre/Jogador).
@@ -205,7 +328,7 @@ service cloud.firestore {
 
 ---
 
-### **Sprint 2: Campanhas & Sessões** (Semanas 5-8)
+### **Sprint 2: Campanhas & Sessões** (Semanas 7-10)
 
 #### Objetivo
 CRUD completo de campanhas, histórico de mensagens persistido no Firestore.
@@ -434,7 +557,7 @@ match /messages/{campaignId}/{messageId} {
 
 ---
 
-### **Sprint 3: Painel do Mestre** (Semanas 9-12)
+### **Sprint 3: Painel do Mestre** (Semanas 11-14)
 
 #### Objetivo
 Interface de controle completa para o Mestre gerenciar campanha e contexto em tempo real.
@@ -529,7 +652,7 @@ Interface de controle completa para o Mestre gerenciar campanha e contexto em te
 
 ---
 
-### **Sprint 4: Painel do Jogador** (Semanas 13-16)
+### **Sprint 4: Painel do Jogador** (Semanas 15-18)
 
 #### Objetivo
 Interface de jogador com ficha de personagem simplificada e sistema de rolagem de dados.
@@ -695,7 +818,7 @@ match /characters/{characterId} {
 
 ---
 
-### **Sprint 5: Base Cognitiva & Integração** (Semanas 17-20)
+### **Sprint 5: Base Cognitiva & Integração** (Semanas 19-22)
 
 #### Objetivo
 Indexar corpus de D&D no Firestore, implementar busca semântica e integrar conhecimento oficial à IA.
@@ -849,6 +972,7 @@ match /manual_texts/{chunkId} {
 
 | Sprint | Entregável | Status |
 |--------|-----------|--------|
+| **Sprint 0** | Landing Page de conversão | 🔴 Pendente |
 | **Sprint 1** | Sistema de autenticação completo | 🔴 Pendente |
 | **Sprint 2** | CRUD de campanhas + histórico | 🔴 Pendente |
 | **Sprint 3** | Painel do Mestre funcional | 🔴 Pendente |
@@ -860,28 +984,37 @@ match /manual_texts/{chunkId} {
 ## 🎯 Próximos Passos Imediatos
 
 ### 1. Preparação (Hoje)
-- [ ] Commitar arquivos pendentes (backend completo)
-- [ ] Criar branches: `feature/auth`, `feature/campaigns`, etc.
+- [x] Commitar arquivos pendentes (backend completo)
+- [ ] Criar branches: `feature/landing-page`, `feature/auth`, etc.
 - [ ] Configurar Firestore Security Rules iniciais
 
-### 2. Sprint 1 - Semana 1
+### 2. Sprint 0 - Semana 1
+- [ ] Criar estrutura de componentes da landing
+- [ ] Implementar Hero Section
+- [ ] Implementar Features Grid
+- [ ] Implementar How It Works
+
+### 3. Sprint 0 - Semana 2
+- [ ] Implementar Pricing Cards
+- [ ] Implementar FAQ
+- [ ] Implementar CTA Section + Footer
+- [ ] Configurar SEO e Analytics
+- [ ] Testes de performance (Lighthouse)
+
+### 4. Sprint 1 - Semana 1
 - [ ] Implementar `userSchema.js`
 - [ ] Criar `authMiddleware.js`
 - [ ] Criar `authController.js`
 - [ ] Criar rotas `/auth/*`
 - [ ] Testar autenticação via Postman
 
-### 3. Sprint 1 - Semana 2
+### 5. Sprint 1 - Semanas 2-4
 - [ ] Criar `AuthContext.tsx`
 - [ ] Implementar páginas de login/registro
 - [ ] Criar `ProtectedRoute.tsx`
 - [ ] Criar Header com menu de usuário
-
-### 4. Sprint 1 - Semanas 3-4
 - [ ] Criar página de perfil
-- [ ] Implementar edição de preferências
 - [ ] Testes de integração (Cypress)
-- [ ] Deploy de staging
 
 ---
 
@@ -936,14 +1069,15 @@ match /manual_texts/{chunkId} {
 ## 📅 Timeline Resumido
 
 ```
-Semana 1-4:   ████████░░ Autenticação & Usuários
-Semana 5-8:   ░░░░████░░ Campanhas & Sessões
-Semana 9-12:  ░░░░░░████ Painel do Mestre
-Semana 13-16: ░░░░░░░░██ Painel do Jogador
-Semana 17-20: ░░░░░░░░░█ Base Cognitiva
+Semana 1-2:   ██░░░░░░░░░░ Landing Page
+Semana 3-6:   ░░████░░░░░░ Autenticação & Usuários
+Semana 7-10:  ░░░░░░████░░ Campanhas & Sessões
+Semana 11-14: ░░░░░░░░████ Painel do Mestre
+Semana 15-18: ░░░░░░░░░░██ Painel do Jogador
+Semana 19-22: ░░░░░░░░░░░█ Base Cognitiva
 ```
 
-**Total:** 20 semanas (~5 meses)
+**Total:** 22 semanas (~5.5 meses)
 
 ---
 
