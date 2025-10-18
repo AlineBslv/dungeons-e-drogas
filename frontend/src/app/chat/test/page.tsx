@@ -10,25 +10,23 @@ interface Message {
   content: string;
 }
 
-export default function ChatPage({ params }: { params: { campaignId: string } }) {
+export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { sender: "ai", content: ">ÙB Bem-vindo, Mestre! Estou pronto para narrar sua jornada épica." },
+    { sender: "ai", content: "Bem-vindo, Mestre! Estou pronto para narrar sua jornada epica." },
   ]);
   const [typing, setTyping] = useState(false);
 
   const handleSend = async (msg: string) => {
-    // Adiciona mensagem do usuário
     setMessages((prev) => [...prev, { sender: "user", content: msg }]);
     setTyping(true);
 
-    // Simular resposta da IA (posteriormente será integrado com Gemini API)
     setTimeout(() => {
       setTyping(false);
       setMessages((prev) => [
         ...prev,
         {
           sender: "ai",
-          content: "=­ Drogon reflete sobre suas palavras... 'Interessante, conte-me mais sobre isso, nobre aventureiro.'"
+          content: "Drogon reflete sobre suas palavras... 'Interessante, conte-me mais sobre isso, nobre aventureiro.'"
         },
       ]);
     }, 1500);
@@ -37,7 +35,7 @@ export default function ChatPage({ params }: { params: { campaignId: string } })
   return (
     <main className="flex flex-col h-screen bg-gradient-to-b from-[#0A0A0A] to-[#121212]">
       <header className="text-center py-3 border-b border-[#2F2D27] bg-[#141312] font-['Cinzel'] text-[#C5A75B] shadow-inner">
-        <h1 className="text-xl font-semibold">Campanha: A Ira dos Kobolds (</h1>
+        <h1 className="text-xl font-semibold">Campanha: A Ira dos Kobolds</h1>
       </header>
 
       <ChatContainer messages={messages} />

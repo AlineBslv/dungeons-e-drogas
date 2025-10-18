@@ -27,7 +27,7 @@ export default function ChatInput({ onSend }: { onSend: (msg: string) => void })
         value={msg}
         onChange={(e) => setMsg(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Digite sua invocação..."
+        placeholder="Digite sua invocacao..."
         className="flex-1 resize-none bg-transparent text-[#E8E6E1] placeholder-gray-500 font-['Crimson_Pro'] min-h-[60px] max-h-[120px]"
         aria-label="Campo de mensagem"
       />
