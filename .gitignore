@@ -37,6 +37,13 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 
+# Secrets and sensitive files
+SECRETS_QUICK_GUIDE.md
+add-secrets.sh
+*.key
+*.pem
+service-account*.json
+
 # Vercel
 .vercel
 
