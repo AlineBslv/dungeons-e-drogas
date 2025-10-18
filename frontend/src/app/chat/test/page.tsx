@@ -4,6 +4,7 @@ import { useState } from "react";
 import ChatContainer from "@/components/chat/ChatContainer";
 import ChatInput from "@/components/chat/ChatInput";
 import TypingIndicator from "@/components/chat/TypingIndicator";
+import { sendToChat } from "@/actions/sendMessage";
 
 interface Message {
   sender: "user" | "ai";
@@ -12,7 +13,7 @@ interface Message {
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { sender: "ai", content: "Bem-vindo, Mestre! Estou pronto para narrar sua jornada epica." },
+    { sender: "ai", content: "🧙‍♂️ Bem-vindo de volta, Mestre!" },
   ]);
   const [typing, setTyping] = useState(false);
 
@@ -20,16 +21,33 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, { sender: "user", content: msg }]);
     setTyping(true);
 
-    setTimeout(() => {
+    try {
+      // Chama o backend real com Gemini AI
+      const response = await sendToChat({
+        message: msg,
+        campaignId: "cmp_kobolds",
+        userId: "aline_001",
+      });
+
       setTyping(false);
       setMessages((prev) => [
         ...prev,
         {
           sender: "ai",
-          content: "Drogon reflete sobre suas palavras... 'Interessante, conte-me mais sobre isso, nobre aventureiro.'"
+          content: response,
         },
       ]);
-    }, 1500);
+    } catch (error) {
+      setTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "ai",
+          content: "O grimório das respostas está temporariamente selado... tente novamente, Mestre.",
+        },
+      ]);
+      console.error("Erro ao enviar mensagem:", error);
+    }
   };
 
   return (

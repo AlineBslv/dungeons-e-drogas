@@ -4,17 +4,16 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 if (!admin.apps.length) {
-  // Você precisará criar um Service Account no Firebase Console
-  // e adicionar as credenciais no arquivo .env
-  // Por enquanto, este arquivo está pronto para receber a configuração
-
-  // Descomente quando tiver o Service Account:
-  /*
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-  */
+  try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+    console.log("✅ Firebase Admin inicializado com sucesso");
+  } catch (error) {
+    console.error("❌ Erro ao inicializar Firebase Admin:", error.message);
+    console.error("⚠️  Configure FIREBASE_SERVICE_ACCOUNT no .env");
+  }
 }
 
 const db = admin.firestore();
