@@ -5,13 +5,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { FiSend } from "react-icons/fi";
 
-export default function ChatInput({ onSend }: { onSend: (msg: string) => void }) {
+interface ChatInputProps {
+  onSendMessage?: (msg: string) => void;
+  onSend?: (msg: string) => void;
+  disabled?: boolean;
+}
+
+export default function ChatInput({ onSendMessage, onSend, disabled }: ChatInputProps) {
   const [msg, setMsg] = useState("");
 
   const handleSend = () => {
-    if (!msg.trim()) return;
-    onSend(msg);
-    setMsg("");
+    if (!msg.trim() || disabled) return;
+    const sendFunc = onSendMessage || onSend;
+    if (sendFunc) {
+      sendFunc(msg);
+      setMsg("");
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -22,20 +31,22 @@ export default function ChatInput({ onSend }: { onSend: (msg: string) => void })
   };
 
   return (
-    <div className="flex items-end gap-2 border-t border-[#2F2D27] bg-[#0D0D0D] p-4">
+    <div className="flex items-end gap-3 border-t border-border bg-dark-100 p-4">
       <Textarea
         value={msg}
         onChange={(e) => setMsg(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Digite sua invocacao..."
-        className="flex-1 resize-none bg-transparent text-[#E8E6E1] placeholder-gray-500 font-['Crimson_Pro'] min-h-[60px] max-h-[120px]"
+        placeholder="Digite sua invocação..."
+        className="flex-1 resize-none bg-dark-500 border-border text-text-primary placeholder:text-text-secondary/60 placeholder:italic font-lore min-h-[60px] max-h-[120px] focus:border-gold-500"
         aria-label="Campo de mensagem"
       />
       <Button
         onClick={handleSend}
-        className="rounded-full bg-gradient-to-br from-[#C5A75B] to-[#9F7A32] text-black hover:shadow-[0_0_10px_#C5A75B] transition-shadow"
+        variant="drogon"
         size="icon"
         aria-label="Enviar mensagem"
+        className="rounded-full"
+        disabled={disabled}
       >
         <FiSend className="h-5 w-5" />
       </Button>

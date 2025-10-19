@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import themeTokens from "./tokens/theme.json";
 
 const config: Config = {
   darkMode: ["class"],
@@ -10,17 +11,45 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        parchment: "#E8E6E1",
-        leather: "#2A211B",
-        golden: "#C5A75B",
-        darkbg: "#121212",
+        // Dark Medieval Palette
+        dark: {
+          100: themeTokens.colors.dark["100"],
+          300: themeTokens.colors.dark["300"],
+          500: themeTokens.colors.dark["500"],
+        },
+        gold: {
+          300: themeTokens.colors.gold["300"],
+          500: themeTokens.colors.gold["500"],
+        },
+        text: {
+          primary: themeTokens.colors.text.primary,
+          secondary: themeTokens.colors.text.secondary,
+        },
+        ruby: themeTokens.colors.ruby,
+        emerald: themeTokens.colors.emerald,
+        arcane: themeTokens.colors.arcane,
+        border: themeTokens.colors.border,
+
+        // Legacy aliases (para compatibilidade)
+        parchment: themeTokens.colors.text.primary,
+        leather: themeTokens.colors.dark["300"],
+        golden: themeTokens.colors.gold["500"],
+        darkbg: themeTokens.colors.dark["100"],
       },
       fontFamily: {
-        medieval: ["Cinzel", "serif"],
-        narrative: ["Crimson Pro", "serif"],
+        medieval: ["var(--font-medieval)", "Cinzel Decorative", "serif"],
+        lore: ["var(--font-lore)", "Libre Baskerville", "serif"],
+        ui: ["var(--font-ui)", "Inter", "sans-serif"],
+        // Legacy alias
+        narrative: ["var(--font-lore)", "Libre Baskerville", "serif"],
       },
       boxShadow: {
-        glow: "0 0 15px rgba(197, 167, 91, 0.5)",
+        glow: themeTokens.shadows.glow,
+        "glow-intense": themeTokens.shadows["glow-intense"],
+        arcane: themeTokens.shadows.arcane,
+      },
+      borderRadius: {
+        card: themeTokens.spacing["card-radius"],
       },
     },
   },

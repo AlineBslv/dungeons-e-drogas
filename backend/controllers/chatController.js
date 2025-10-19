@@ -22,11 +22,18 @@ async function sendMessage(req, res) {
       return res.status(400).json({ error: "Mensagem muito longa (máx. 2000 caracteres)" });
     }
 
-    // 1️⃣ Recupera contexto da campanha
+    // 1️⃣ Recupera dados completos da campanha (tone, detail_level, language)
+    const campaignDoc = await db.collection("campaigns").doc(campaignId).get();
+    if (!campaignDoc.exists) {
+      return res.status(404).json({ error: "Campanha não encontrada" });
+    }
+    const campaignData = campaignDoc.data();
+
+    // 2️⃣ Recupera contexto narrativo da campanha
     const ctxDoc = await db.collection("contexts").doc(campaignId).get();
     const campaignContext = ctxDoc.exists ? ctxDoc.data().summary : "";
 
-    // 2️⃣ Recupera últimas mensagens (para histórico do prompt)
+    // 3️⃣ Recupera últimas mensagens (para histórico do prompt)
     const msgsSnapshot = await db
       .collection("messages")
       .where("campaignId", "==", campaignId)
@@ -38,17 +45,20 @@ async function sendMessage(req, res) {
       .map((d) => d.data())
       .reverse();
 
-    // 3️⃣ Monta prompt base pro Gemini (Prompt Blueprint)
+    // 4️⃣ Monta contexto completo pro Gemini com parâmetros de personalização
     const context = {
-      campaignName: campaignId,
+      campaignName: campaignData.title || campaignId,
       summary: campaignContext,
       history: lastMessages,
+      tone: campaignData.context?.tone || 'epic',
+      detail_level: campaignData.context?.detail_level || 'medium',
+      language: campaignData.context?.language || 'pt-BR',
     };
 
-    // 4️⃣ Recebe resposta da IA
+    // 5️⃣ Recebe resposta da IA
     const aiResponse = await askGemini(message, context);
 
-    // 5️⃣ Salva no Firestore (batch write para atomicidade)
+    // 6️⃣ Salva no Firestore (batch write para atomicidade)
     const batch = db.batch();
 
     const userMsgRef = db.collection("messages").doc();
@@ -70,7 +80,7 @@ async function sendMessage(req, res) {
 
     await batch.commit();
 
-    // 6️⃣ Retorna resposta
+    // 7️⃣ Retorna resposta
     return res.json({
       from: "ai",
       response: aiResponse.output,

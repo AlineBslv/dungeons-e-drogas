@@ -1,0 +1,196 @@
+rules_version = '2';
+
+/**
+ * Firestore Security Rules - Dungeons e Drogas
+ *
+ * Estrutura de Collections:
+ * - /users/{uid} - Perfis de usuário
+ * - /campaigns/{campaignId} - Campanhas
+ * - /messages/{campaignId}/{messageId} - Mensagens do chat
+ * - /contexts/{campaignId} - Contextos de campanha
+ * - /manual_texts/{textId} - Textos da base cognitiva (D&D rules)
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
+    // Verifica se o usuário está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Verifica se o usuário é o dono do documento
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // Verifica se o usuário é Mestre
+    function isMaster() {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.tier == 'mestre';
+    }
+
+    // Verifica se o usuário é mestre de uma campanha
+    function isCampaignMaster(campaignId) {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/campaigns/$(campaignId)).data.master_uid == request.auth.uid;
+    }
+
+    // Verifica se o usuário é jogador de uma campanha
+    function isCampaignPlayer(campaignId) {
+      return isAuthenticated() &&
+             request.auth.uid in get(/databases/$(database)/documents/campaigns/$(campaignId)).data.players;
+    }
+
+    // Verifica se o usuário tem acesso à campanha (mestre ou jogador)
+    function hasCampaignAccess(campaignId) {
+      return isCampaignMaster(campaignId) || isCampaignPlayer(campaignId);
+    }
+
+    // ============================================
+    // USERS COLLECTION
+    // ============================================
+    match /users/{userId} {
+      // Leitura: apenas o próprio usuário
+      allow read: if isOwner(userId);
+
+      // Criação: apenas durante registro (uid deve coincidir)
+      allow create: if isOwner(userId) &&
+                      request.resource.data.uid == userId &&
+                      request.resource.data.tier in ['mestre', 'jogador'] &&
+                      request.resource.data.keys().hasAll(['uid', 'email', 'name', 'tier', 'active_campaigns', 'created_at']);
+
+      // Atualização: apenas o próprio usuário, não pode mudar uid, email ou tier
+      allow update: if isOwner(userId) &&
+                      request.resource.data.uid == resource.data.uid &&
+                      request.resource.data.email == resource.data.email &&
+                      request.resource.data.tier == resource.data.tier;
+
+      // Deleção: não permitida (preservar histórico)
+      allow delete: if false;
+    }
+
+    // ============================================
+    // CAMPAIGNS COLLECTION
+    // ============================================
+    match /campaigns/{campaignId} {
+      // Leitura: apenas mestre e jogadores da campanha
+      allow read: if hasCampaignAccess(campaignId);
+
+      // Criação: usuários autenticados podem criar campanhas (com validação no código)
+      allow create: if isAuthenticated() &&
+                      request.resource.data.master_uid == request.auth.uid &&
+                      request.resource.data.keys().hasAll(['master_uid', 'players', 'context', 'created_at']);
+
+      // Atualização: apenas o mestre da campanha
+      allow update: if isCampaignMaster(campaignId) &&
+                      request.resource.data.master_uid == resource.data.master_uid; // não pode mudar o mestre
+
+      // Deleção: apenas o mestre da campanha
+      allow delete: if isCampaignMaster(campaignId);
+    }
+
+    // ============================================
+    // MESSAGES COLLECTION (subcollection de campaigns)
+    // ============================================
+    match /campaigns/{campaignId}/messages/{messageId} {
+      // Leitura: todos os participantes da campanha
+      allow read: if hasCampaignAccess(campaignId);
+
+      // Criação: apenas participantes da campanha
+      // Mestre pode enviar como 'mestre' ou 'drogon'
+      // Jogador pode enviar apenas como 'jogador'
+      allow create: if hasCampaignAccess(campaignId) &&
+                      request.resource.data.keys().hasAll(['sender', 'content', 'timestamp']) &&
+                      (
+                        (isCampaignMaster(campaignId) && request.resource.data.sender in ['mestre', 'drogon']) ||
+                        (isCampaignPlayer(campaignId) && request.resource.data.sender == 'jogador')
+                      );
+
+      // Atualização: não permitida (mensagens são imutáveis)
+      allow update: if false;
+
+      // Deleção: apenas o mestre pode deletar mensagens
+      allow delete: if isCampaignMaster(campaignId);
+    }
+
+    // ============================================
+    // CONTEXTS COLLECTION
+    // ============================================
+    match /contexts/{campaignId} {
+      // Leitura: todos os participantes da campanha
+      allow read: if hasCampaignAccess(campaignId);
+
+      // Criação e Atualização: apenas o mestre da campanha
+      allow create, update: if isCampaignMaster(campaignId);
+
+      // Deleção: apenas o mestre da campanha
+      allow delete: if isCampaignMaster(campaignId);
+    }
+
+    // ============================================
+    // MANUAL_TEXTS COLLECTION (Base Cognitiva D&D)
+    // ============================================
+    match /manual_texts/{textId} {
+      // Leitura: todos os usuários autenticados
+      allow read: if isAuthenticated();
+
+      // Criação, Atualização e Deleção: apenas mestres (para gerenciar a base)
+      allow create, update, delete: if isMaster();
+    }
+
+    // ============================================
+    // CHARACTER_SHEETS COLLECTION (futuro)
+    // ============================================
+    match /character_sheets/{sheetId} {
+      // Leitura: dono da ficha ou mestre da campanha
+      allow read: if isAuthenticated() && (
+        resource.data.player_uid == request.auth.uid ||
+        (resource.data.campaign_id != null && isCampaignMaster(resource.data.campaign_id))
+      );
+
+      // Criação: apenas jogadores (com uid correspondente)
+      allow create: if isAuthenticated() &&
+                      request.resource.data.player_uid == request.auth.uid;
+
+      // Atualização: apenas o dono da ficha
+      allow update: if isAuthenticated() &&
+                      resource.data.player_uid == request.auth.uid;
+
+      // Deleção: apenas o dono da ficha
+      allow delete: if isAuthenticated() &&
+                      resource.data.player_uid == request.auth.uid;
+    }
+
+    // ============================================
+    // SESSION_LOGS COLLECTION (histórico de sessões)
+    // ============================================
+    match /session_logs/{sessionId} {
+      // Leitura: participantes da campanha
+      allow read: if isAuthenticated() &&
+                     hasCampaignAccess(resource.data.campaign_id);
+
+      // Criação: apenas o mestre da campanha
+      allow create: if isAuthenticated() &&
+                      isCampaignMaster(request.resource.data.campaign_id);
+
+      // Atualização: apenas o mestre da campanha
+      allow update: if isAuthenticated() &&
+                      isCampaignMaster(resource.data.campaign_id);
+
+      // Deleção: não permitida (preservar histórico)
+      allow delete: if false;
+    }
+
+    // ============================================
+    // DEFAULT: DENY ALL
+    // ============================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

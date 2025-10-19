@@ -5,26 +5,30 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium font-ui transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "bg-primary text-primary-foreground shadow hover:shadow-glow hover:-translate-y-0.5",
+        drogon:
+          "bg-gradient-to-br from-gold-500 to-gold-300 text-dark-100 font-semibold shadow-md hover:shadow-glow-intense hover:-translate-y-1 active:translate-y-0",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-dark-500/80 hover:border-gold-300 border border-border",
+        destructive:
+          "bg-ruby text-text-primary shadow-sm hover:bg-ruby/90 hover:shadow-[0_0_10px_rgba(118,43,40,0.5)]",
+        outline:
+          "border border-border bg-transparent shadow-sm hover:bg-dark-300 hover:border-gold-500 hover:text-gold-500",
+        ghost: "hover:bg-dark-300 hover:text-gold-500",
+        link: "text-gold-500 underline-offset-4 hover:underline hover:text-gold-300",
+        arcane:
+          "bg-arcane text-text-primary shadow-arcane hover:shadow-[0_0_20px_rgba(58,74,99,0.6)] hover:-translate-y-0.5",
       },
       size: {
-        default: "h-9 px-4 py-2",
+        default: "h-10 px-4 py-2",
         sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        lg: "h-12 rounded-md px-8 text-base",
+        icon: "h-10 w-10",
       },
     },
     defaultVariants: {
