@@ -1,12 +1,540 @@
 @import "tailwindcss";
 
-/* Dungeons & Drogas - Design System CSS */
+/* ============================================
+   Dungeons & Drogas - Dark Medieval Design System
+   Based on Shadcn UI with custom theme tokens
+   ============================================ */
 
-:root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+@layer base {
+  :root {
+    /* Shadcn UI Base Colors - Light Mode (fallback) */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark Medieval Theme - Primary Colors */
+    --background: 25 18% 6%;          /* #181310 - Lighter medieval black (melhor legibilidade) */
+    --foreground: 35 25% 95%;         /* #F5F1EA - Warm parchment white */
+
+    /* Card & Surfaces */
+    --card: 25 18% 9%;                /* #211C17 - Card background (mais contraste) */
+    --card-foreground: 35 25% 95%;    /* #F5F1EA - Card text */
+
+    /* Popover & Tooltips */
+    --popover: 25 18% 11%;            /* #282319 - Popover background */
+    --popover-foreground: 35 25% 95%; /* #F5F1EA - Popover text */
+
+    /* Primary (Rich Gold) */
+    --primary: 42 55% 62%;            /* #D9B76A - Dourado luxuoso e rico */
+    --primary-foreground: 25 18% 6%;  /* Dark text on gold */
+
+    /* Secondary (Warm Amber) */
+    --secondary: 35 45% 50%;          /* #B8935E - Warm amber/bronze tone */
+    --secondary-foreground: 35 25% 95%;
+
+    /* Muted (Subtle backgrounds) */
+    --muted: 25 18% 12%;              /* #282319 - Slightly lighter than card */
+    --muted-foreground: 30 15% 72%;   /* #BFBAB2 - Muted text (melhor contraste WCAG) */
+
+    /* Accent (Arcane Blue) */
+    --accent: 215 35% 40%;            /* #415672 - Brighter arcane blue */
+    --accent-foreground: 35 25% 95%;
+
+    /* Destructive (Ruby Red) */
+    --destructive: 3 60% 38%;         /* #913832 - Brighter ruby red */
+    --destructive-foreground: 35 25% 95%;
+
+    /* Success (Emerald Green) - NOVO */
+    --success: 152 45% 42%;           /* #408F6A - Forest emerald */
+    --success-foreground: 35 25% 95%;
+
+    /* Warning (Amber) - NOVO */
+    --warning: 38 85% 55%;            /* #F0A62B - Bright amber */
+    --warning-foreground: 25 18% 6%;  /* Dark text on warning */
+
+    /* Info (Arcane Blue) - NOVO */
+    --info: 215 35% 45%;              /* #4A5F82 - Brighter info blue */
+    --info-foreground: 35 25% 95%;
+
+    /* Borders & Inputs */
+    --border: 30 20% 25%;             /* #4D453A - More visible border */
+    --input: 30 20% 25%;              /* Same as border */
+    --ring: 42 55% 62%;               /* Rich gold ring/focus */
+
+    /* Border Radius */
+    --radius: 0.75rem;                /* Slightly rounded medieval style */
+
+    /* ==========================================
+       Metallic Colors - Gold & Silver
+       ========================================== */
+
+    /* Gold Variations - Enriquecidas */
+    --gold-light: 45 85% 78%;         /* #F8E9C3 - Brighter gold shimmer */
+    --gold-medium: 42 65% 65%;        /* #DFBD77 - Richer medium gold */
+    --gold-dark: 38 50% 45%;          /* #AF924F - Deeper aged gold */
+    --gold-deep: 35 45% 32%;          /* #7E672F - Darkest antique gold */
+
+    /* Silver Variations */
+    --silver-light: 210 15% 85%;      /* #D4D8DB - Light silver shimmer */
+    --silver-medium: 210 12% 65%;     /* #9DA5AB - Medium silver */
+    --silver-dark: 210 10% 45%;       /* #6B747C - Dark aged silver */
+    --silver-deep: 210 8% 30%;        /* #464D52 - Deep tarnished silver */
+
+    /* Copper Variations - EXPANDIDAS */
+    --copper-light: 28 65% 60%;       /* #D9946B - Light copper */
+    --copper: 25 58% 48%;             /* #BA7F50 - Aged copper */
+    --copper-dark: 22 50% 35%;        /* #885537 - Dark copper */
+
+    /* Bronze */
+    --bronze: 30 50% 40%;             /* #A67847 - Antique bronze */
+  }
 }
 
-body {
-  @apply bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white;
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-ui), Inter, sans-serif;
+    /* Dark medieval gradient background */
+    background: linear-gradient(135deg,
+      hsl(var(--background)) 0%,
+      hsl(20 15% 5%) 50%,
+      hsl(var(--background)) 100%
+    );
+    background-attachment: fixed;
+  }
+
+  /* Custom scrollbar - Medieval theme */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary));
+    border-radius: 0.375rem;
+    border: 2px solid hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--gold-medium));
+  }
+
+  /* Typography improvements */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-medieval), "Cinzel Decorative", serif;
+    letter-spacing: 0.025em;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
+  }
+
+  /* Enhanced focus states for accessibility */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 3px solid hsl(var(--primary));
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.2);
+  }
+}
+
+/* Custom utility classes for the medieval theme */
+@layer utilities {
+  /* ==========================================
+     Text Effects
+     ========================================== */
+  .text-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  .text-glow-gold {
+    text-shadow:
+      0 0 15px rgba(197, 167, 91, 0.6),
+      0 0 30px rgba(197, 167, 91, 0.3);
+  }
+
+  .text-glow-silver {
+    text-shadow:
+      0 0 12px rgba(212, 216, 219, 0.5),
+      0 0 25px rgba(212, 216, 219, 0.2);
+  }
+
+  .text-metallic-gold {
+    background: linear-gradient(180deg,
+      hsl(var(--gold-light)) 0%,
+      hsl(var(--gold-medium)) 40%,
+      hsl(var(--gold-dark)) 70%,
+      hsl(var(--gold-deep)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(197, 167, 91, 0.4));
+  }
+
+  .text-metallic-silver {
+    background: linear-gradient(180deg,
+      hsl(var(--silver-light)) 0%,
+      hsl(var(--silver-medium)) 40%,
+      hsl(var(--silver-dark)) 70%,
+      hsl(var(--silver-deep)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(157, 165, 171, 0.4));
+  }
+
+  /* ==========================================
+     Border & Box Effects
+     ========================================== */
+  .border-glow {
+    box-shadow: 0 0 15px rgba(197, 167, 91, 0.3);
+  }
+
+  .border-glow-gold {
+    box-shadow:
+      0 0 20px rgba(197, 167, 91, 0.4),
+      inset 0 0 15px rgba(197, 167, 91, 0.1);
+  }
+
+  .border-glow-silver {
+    box-shadow:
+      0 0 20px rgba(212, 216, 219, 0.3),
+      inset 0 0 15px rgba(212, 216, 219, 0.08);
+  }
+
+  .border-ornate-gold {
+    border: 2px solid hsl(var(--gold-medium));
+    border-image: linear-gradient(135deg,
+      hsl(var(--gold-light)),
+      hsl(var(--gold-medium)),
+      hsl(var(--gold-dark))
+    ) 1;
+    box-shadow:
+      0 0 10px rgba(197, 167, 91, 0.3),
+      inset 0 1px 0 rgba(244, 228, 184, 0.2);
+  }
+
+  .border-ornate-silver {
+    border: 2px solid hsl(var(--silver-medium));
+    border-image: linear-gradient(135deg,
+      hsl(var(--silver-light)),
+      hsl(var(--silver-medium)),
+      hsl(var(--silver-dark))
+    ) 1;
+    box-shadow:
+      0 0 10px rgba(212, 216, 219, 0.2),
+      inset 0 1px 0 rgba(212, 216, 219, 0.15);
+  }
+
+  /* ==========================================
+     Background Effects
+     ========================================== */
+  .bg-grimoire {
+    background: linear-gradient(135deg,
+      hsl(var(--card)) 0%,
+      hsl(20 15% 8%) 100%
+    );
+  }
+
+  .bg-metallic-gold {
+    background: linear-gradient(135deg,
+      hsl(var(--gold-deep)) 0%,
+      hsl(var(--gold-dark)) 50%,
+      hsl(var(--gold-deep)) 100%
+    );
+  }
+
+  .bg-metallic-silver {
+    background: linear-gradient(135deg,
+      hsl(var(--silver-deep)) 0%,
+      hsl(var(--silver-dark)) 50%,
+      hsl(var(--silver-deep)) 100%
+    );
+  }
+
+  .bg-shimmer-gold {
+    background:
+      linear-gradient(
+        110deg,
+        hsl(var(--gold-deep)) 0%,
+        hsl(var(--gold-dark)) 25%,
+        hsl(var(--gold-medium)) 50%,
+        hsl(var(--gold-dark)) 75%,
+        hsl(var(--gold-deep)) 100%
+      );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  .bg-shimmer-silver {
+    background:
+      linear-gradient(
+        110deg,
+        hsl(var(--silver-deep)) 0%,
+        hsl(var(--silver-dark)) 25%,
+        hsl(var(--silver-medium)) 50%,
+        hsl(var(--silver-dark)) 75%,
+        hsl(var(--silver-deep)) 100%
+      );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* Parchment texture effect */
+  .bg-parchment {
+    background-image:
+      linear-gradient(90deg, transparent 79px, hsl(var(--border)) 79px, hsl(var(--border)) 81px, transparent 81px),
+      linear-gradient(hsl(var(--card)), hsl(var(--card)));
+    background-size: 100% 1.2em;
+  }
+
+  /* Decorative corners */
+  .corner-ornament-gold::before,
+  .corner-ornament-gold::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 2px solid hsl(var(--gold-medium));
+    opacity: 0.6;
+  }
+
+  .corner-ornament-gold::before {
+    top: 0;
+    left: 0;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .corner-ornament-gold::after {
+    bottom: 0;
+    right: 0;
+    border-left: none;
+    border-top: none;
+  }
+
+  /* ==========================================
+     Animations
+     ========================================== */
+  @keyframes shimmer {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes sparkle {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  .animate-sparkle {
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.4),
+      0 0 20px hsl(var(--primary) / 0.3);
+  }
+
+  /* ==========================================
+     Texturas de Grimório & Elementos Medievais
+     ========================================== */
+
+  /* Textura de pergaminho sutil */
+  .bg-parchment-subtle {
+    background-image:
+      radial-gradient(circle at 20% 50%, hsl(var(--gold-medium) / 0.05) 1px, transparent 1px),
+      radial-gradient(circle at 80% 50%, hsl(var(--gold-medium) / 0.03) 1px, transparent 1px);
+    background-size: 50px 50px, 70px 70px;
+    background-position: 0 0, 25px 25px;
+  }
+
+  /* Textura de couro */
+  .bg-leather-texture {
+    background-image:
+      linear-gradient(90deg, transparent 79px, hsl(var(--muted) / 0.3) 79px, hsl(var(--muted) / 0.3) 81px, transparent 81px),
+      linear-gradient(transparent 79px, hsl(var(--muted) / 0.2) 79px, hsl(var(--muted) / 0.2) 81px, transparent 81px);
+    background-size: 80px 80px;
+  }
+
+  /* Borda rúnica */
+  .border-runic {
+    border-style: dashed;
+    border-width: 2px;
+    border-image: repeating-linear-gradient(
+      45deg,
+      hsl(var(--gold-medium)),
+      hsl(var(--gold-medium)) 5px,
+      transparent 5px,
+      transparent 10px
+    ) 1;
+  }
+
+  /* Efeito de borda de pergaminho */
+  .scroll-edge-top {
+    position: relative;
+  }
+
+  .scroll-edge-top::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(to bottom,
+      hsl(var(--gold-medium) / 0.3) 0%,
+      transparent 100%
+    );
+    border-radius: 12px 12px 0 0;
+  }
+
+  /* Selo de cera decorativo */
+  .wax-seal {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    background: radial-gradient(circle, hsl(var(--destructive)) 0%, hsl(var(--destructive) / 0.7) 70%, hsl(var(--destructive) / 0.5) 100%);
+    border-radius: 50%;
+    box-shadow:
+      inset 0 2px 4px rgba(0, 0, 0, 0.4),
+      0 2px 8px hsl(var(--destructive) / 0.5);
+  }
+
+  .wax-seal::after {
+    content: '⚔';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    opacity: 0.8;
+    font-weight: bold;
+  }
+
+  /* ==========================================
+     Animações Divertidas (Marca "Drogas")
+     ========================================== */
+
+  /* Balanço divertido */
+  @keyframes wobble {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-2deg); }
+    75% { transform: rotate(2deg); }
+  }
+
+  .animate-wobble {
+    animation: wobble 0.5s ease-in-out;
+  }
+
+  .hover\:animate-wobble:hover {
+    animation: wobble 0.5s ease-in-out;
+  }
+
+  /* Dado bêbado (drunk dice roll) */
+  @keyframes drunk-roll {
+    0% { transform: rotate(0deg) translateX(0); }
+    25% { transform: rotate(90deg) translateX(-5px); }
+    50% { transform: rotate(180deg) translateX(5px); }
+    75% { transform: rotate(270deg) translateX(-5px); }
+    100% { transform: rotate(360deg) translateX(0); }
+  }
+
+  .animate-drunk-roll {
+    animation: drunk-roll 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  /* Piscada travessa */
+  @keyframes wink {
+    0%, 90%, 100% { opacity: 1; }
+    95% { opacity: 0.1; }
+  }
+
+  .animate-wink {
+    animation: wink 2s ease-in-out infinite;
+  }
+
+  /* Bounce sutil */
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 0.6s ease-in-out;
+  }
 }

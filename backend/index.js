@@ -2,10 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const rateLimit = require("express-rate-limit");
+const { authenticateJWT } = require("./middleware/auth");
 const chatRoutes = require("./routes/chat.js");
 const geminiRoutes = require("./routes/gemini.js");
 const uploadRoutes = require("./routes/upload.js");
 const searchRoutes = require("./routes/search.js");
+const charactersRoutes = require("./routes/characters.js");
+const diceRoutes = require("./routes/dice.js");
 
 dotenv.config();
 
@@ -22,15 +25,17 @@ const limiter = rateLimit({
   message: { error: "Muitas requisições. Aguarde um momento antes de tentar novamente." },
 });
 
-app.use("/chat", limiter);
-
-// Rotas
+// Rotas públicas (sem autenticação)
 app.get("/", (req, res) => res.send("🧙‍♂️ Servidor ativo e conectado ao portal do Gemini"));
 app.get("/ping", (_, res) => res.json({ message: "pong" }));
-app.use("/chat", chatRoutes);
-app.use("/gemini", geminiRoutes);
-app.use("/upload", uploadRoutes);
-app.use("/search", searchRoutes);
+app.use("/dice", limiter, diceRoutes); // Rota pública para dados
+
+// Rotas protegidas (requerem autenticação JWT)
+app.use("/chat", limiter, authenticateJWT, chatRoutes);
+app.use("/gemini", authenticateJWT, geminiRoutes);
+app.use("/upload", authenticateJWT, uploadRoutes);
+app.use("/search", authenticateJWT, searchRoutes);
+app.use("/characters", authenticateJWT, charactersRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

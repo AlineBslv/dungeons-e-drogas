@@ -10,19 +10,19 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:shadow-glow hover:-translate-y-0.5",
+          "bg-primary text-primary-foreground shadow hover:shadow-glow hover:-translate-y-0.5 active:translate-y-0 active:shadow",
         drogon:
-          "bg-gradient-to-br from-gold-500 to-gold-300 text-dark-100 font-semibold shadow-md hover:shadow-glow-intense hover:-translate-y-1 active:translate-y-0",
+          "bg-gradient-to-br from-gold-500 to-gold-300 text-dark-100 font-semibold shadow-md hover:shadow-glow-intense hover:-translate-y-1 active:translate-y-0 active:shadow-md",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-dark-500/80 hover:border-gold-300 border border-border",
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-dark-500/80 hover:border-gold-300 border border-border active:bg-dark-500 active:scale-95",
         destructive:
-          "bg-ruby text-text-primary shadow-sm hover:bg-ruby/90 hover:shadow-[0_0_10px_rgba(118,43,40,0.5)]",
+          "bg-ruby text-text-primary shadow-sm hover:bg-ruby/90 hover:shadow-[0_0_10px_rgba(118,43,40,0.5)] active:bg-ruby/80 active:scale-95",
         outline:
-          "border border-border bg-transparent shadow-sm hover:bg-dark-300 hover:border-gold-500 hover:text-gold-500",
-        ghost: "hover:bg-dark-300 hover:text-gold-500",
-        link: "text-gold-500 underline-offset-4 hover:underline hover:text-gold-300",
+          "border border-border bg-transparent shadow-sm hover:bg-primary/10 hover:border-primary hover:text-primary active:bg-primary/5 active:scale-95",
+        ghost: "hover:bg-accent hover:text-accent-foreground active:bg-accent/80 active:scale-95",
+        link: "text-gold-500 underline-offset-4 hover:underline hover:text-gold-300 active:text-gold-400",
         arcane:
-          "bg-arcane text-text-primary shadow-arcane hover:shadow-[0_0_20px_rgba(58,74,99,0.6)] hover:-translate-y-0.5",
+          "bg-arcane text-text-primary shadow-arcane hover:shadow-[0_0_20px_rgba(58,74,99,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-arcane",
       },
       size: {
         default: "h-10 px-4 py-2",

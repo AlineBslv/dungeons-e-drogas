@@ -1,7 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Settings, Sparkles, Globe, Volume2, Palette } from "lucide-react";
+import {
+  GiGearHammer,
+  GiMagicSwirl,
+  GiEarthAmerica,
+  GiSoundWaves,
+  GiPaintBrush
+} from "react-icons/gi";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { slideInRight } from "@/lib/motion-presets";
@@ -98,7 +104,7 @@ export function ContextPanel({ className }: ContextPanelProps) {
       <div className="p-4 space-y-4">
         {/* Cabeçalho */}
         <div className="flex items-center gap-2 pb-2 border-b border-border">
-          <Settings className="h-5 w-5 text-gold-500" />
+          <GiGearHammer className="h-5 w-5 text-gold-500" />
           <h2 className="text-lg font-medieval text-gold-500">Contexto IA</h2>
         </div>
 
@@ -118,7 +124,7 @@ export function ContextPanel({ className }: ContextPanelProps) {
             <Card className="border-gold-500/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2 font-ui text-text-primary">
-                  <Palette className="h-4 w-4 text-gold-500" />
+                  <GiPaintBrush className="h-4 w-4 text-gold-500" />
                   Tom Narrativo
                 </CardTitle>
               </CardHeader>
@@ -131,8 +137,8 @@ export function ContextPanel({ className }: ContextPanelProps) {
                     className={cn(
                       "w-full px-3 py-2 rounded-md text-sm font-ui transition-all",
                       TONE_MAP[displayTone] === currentTone
-                        ? "bg-gold-500/20 text-gold-500 border border-gold-500/50"
-                        : "bg-dark-500 text-text-secondary hover:bg-dark-500/80 hover:text-gold-300",
+                        ? "bg-gold-500/20 text-gold-500 border border-gold-500/50 shadow-glow"
+                        : "bg-dark-500 text-text-secondary hover:bg-dark-500/80 hover:text-gold-300 hover:border hover:border-gold-500/30 active:scale-95",
                       isUpdating && "opacity-50 cursor-not-allowed"
                     )}
                   >
@@ -146,7 +152,7 @@ export function ContextPanel({ className }: ContextPanelProps) {
             <Card className="border-gold-500/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2 font-ui text-text-primary">
-                  <Sparkles className="h-4 w-4 text-gold-500" />
+                  <GiMagicSwirl className="h-4 w-4 text-gold-500" />
                   Nível de Detalhe
                 </CardTitle>
               </CardHeader>
@@ -159,8 +165,8 @@ export function ContextPanel({ className }: ContextPanelProps) {
                     className={cn(
                       "w-full px-3 py-2 rounded-md text-sm font-ui transition-all",
                       DETAIL_MAP[displayLevel] === currentDetail
-                        ? "bg-gold-500/20 text-gold-500 border border-gold-500/50"
-                        : "bg-dark-500 text-text-secondary hover:bg-dark-500/80 hover:text-gold-300",
+                        ? "bg-gold-500/20 text-gold-500 border border-gold-500/50 shadow-glow"
+                        : "bg-dark-500 text-text-secondary hover:bg-dark-500/80 hover:text-gold-300 hover:border hover:border-gold-500/30 active:scale-95",
                       isUpdating && "opacity-50 cursor-not-allowed"
                     )}
                   >
@@ -174,7 +180,7 @@ export function ContextPanel({ className }: ContextPanelProps) {
             <Card className="border-gold-500/30">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2 font-ui text-text-primary">
-                  <Globe className="h-4 w-4 text-gold-500" />
+                  <GiEarthAmerica className="h-4 w-4 text-gold-500" />
                   Idioma
                 </CardTitle>
               </CardHeader>
@@ -187,8 +193,8 @@ export function ContextPanel({ className }: ContextPanelProps) {
                     className={cn(
                       "w-full px-3 py-2 rounded-md text-sm font-ui transition-all",
                       LANGUAGE_MAP[displayLang] === currentLanguage
-                        ? "bg-gold-500/20 text-gold-500 border border-gold-500/50"
-                        : "bg-dark-500 text-text-secondary hover:bg-dark-500/80 hover:text-gold-300",
+                        ? "bg-gold-500/20 text-gold-500 border border-gold-500/50 shadow-glow"
+                        : "bg-dark-500 text-text-secondary hover:bg-dark-500/80 hover:text-gold-300 hover:border hover:border-gold-500/30 active:scale-95",
                       isUpdating && "opacity-50 cursor-not-allowed"
                     )}
                   >
@@ -210,7 +216,7 @@ export function ContextPanel({ className }: ContextPanelProps) {
                   Mestre Drogon ativo
                 </span>
               </div>
-              <Volume2 className="h-4 w-4 text-gold-500" />
+              <GiSoundWaves className="h-4 w-4 text-gold-500" />
             </div>
           </CardContent>
         </Card>

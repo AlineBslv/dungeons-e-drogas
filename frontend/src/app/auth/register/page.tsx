@@ -4,10 +4,12 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth, UserTier } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { GiDragonHead } from 'react-icons/gi';
+import { GiDragonHead, GiSwordman } from 'react-icons/gi';
 import { FaUserShield } from 'react-icons/fa';
-import { GiSwordman } from 'react-icons/gi';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -49,159 +51,171 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex items-center justify-center p-4">
+    <main className="min-h-screen flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="w-full max-w-md"
       >
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-8 shadow-2xl">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <GiDragonHead className="w-20 h-20 text-purple-400 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-2">
-              Criar Conta
-            </h1>
-            <p className="text-gray-400">Comece sua aventura épica</p>
-          </div>
+        <Card className="bg-grimoire border-primary/30 shadow-arcane relative overflow-hidden">
+          {/* Decorative corners */}
+          <div className="absolute top-3 left-3 w-8 h-8 border-t-2 border-l-2 border-primary/40 rounded-tl-lg"></div>
+          <div className="absolute bottom-3 right-3 w-8 h-8 border-b-2 border-r-2 border-primary/40 rounded-br-lg"></div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-6 text-red-300 text-sm">
-              {error}
-            </div>
-          )}
+          {/* Subtle background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-50"></div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2">
-                Nome
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-gray-900/50 border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                placeholder="Seu nome"
-              />
-            </div>
+          <div className="relative z-10">
+            {/* Header */}
+            <CardHeader className="text-center pb-8">
+              <GiDragonHead className="w-20 h-20 text-primary mx-auto mb-4 animate-pulse text-glow-gold" />
+              <CardTitle className="text-3xl font-medieval text-metallic-gold mb-2">
+                Criar Conta
+              </CardTitle>
+              <CardDescription className="text-muted-foreground font-lore">
+                Comece sua aventura épica
+              </CardDescription>
+            </CardHeader>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-gray-900/50 border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                placeholder="seu@email.com"
-              />
-            </div>
+            <CardContent className="space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 text-destructive-foreground text-sm font-lore">
+                  {error}
+                </div>
+              )}
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
-                Senha
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-gray-900/50 border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                placeholder="••••••••"
-              />
-            </div>
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-foreground font-medieval">
+                    Nome
+                  </label>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    placeholder="Seu nome"
+                  />
+                </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
-                Confirmar Senha
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-gray-900/50 border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                placeholder="••••••••"
-              />
-            </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-foreground font-medieval">
+                    Email
+                  </label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="seu@email.com"
+                  />
+                </div>
 
-            {/* User Tier Selection */}
-            <div>
-              <label className="block text-sm font-medium mb-3">Escolha seu papel</label>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setTier('mestre')}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    tier === 'mestre'
-                      ? 'border-purple-500 bg-purple-500/20'
-                      : 'border-purple-500/30 bg-gray-900/50 hover:border-purple-500/50'
-                  }`}
+                <div className="space-y-2">
+                  <label htmlFor="password" className="block text-sm font-medium text-foreground font-medieval">
+                    Senha
+                  </label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground font-medieval">
+                    Confirmar Senha
+                  </label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                {/* User Tier Selection */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-foreground font-medieval">
+                    Escolha seu papel
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setTier('mestre')}
+                      className={`p-4 rounded-lg border-2 transition-all hover-lift ${
+                        tier === 'mestre'
+                          ? 'border-primary bg-primary/20 shadow-glow'
+                          : 'border-border bg-card/50 hover:border-primary/50'
+                      }`}
+                    >
+                      <FaUserShield className="w-8 h-8 mx-auto mb-2 text-primary" />
+                      <p className="font-semibold text-sm font-medieval">Mestre</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-lore">Narro aventuras</p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setTier('jogador')}
+                      className={`p-4 rounded-lg border-2 transition-all hover-lift ${
+                        tier === 'jogador'
+                          ? 'border-primary bg-primary/20 shadow-glow'
+                          : 'border-border bg-card/50 hover:border-primary/50'
+                      }`}
+                    >
+                      <GiSwordman className="w-8 h-8 mx-auto mb-2 text-primary" />
+                      <p className="font-semibold text-sm font-medieval">Jogador</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-lore">Vivo aventuras</p>
+                    </button>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full font-medieval"
+                  size="lg"
                 >
-                  <FaUserShield className="w-8 h-8 mx-auto mb-2 text-purple-400" />
-                  <p className="font-semibold text-sm">Mestre</p>
-                  <p className="text-xs text-gray-400 mt-1">Narro aventuras</p>
-                </button>
+                  {loading ? 'Criando conta...' : 'Criar Conta'}
+                </Button>
+              </form>
 
-                <button
-                  type="button"
-                  onClick={() => setTier('jogador')}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    tier === 'jogador'
-                      ? 'border-purple-500 bg-purple-500/20'
-                      : 'border-purple-500/30 bg-gray-900/50 hover:border-purple-500/50'
-                  }`}
-                >
-                  <GiSwordman className="w-8 h-8 mx-auto mb-2 text-purple-400" />
-                  <p className="font-semibold text-sm">Jogador</p>
-                  <p className="text-xs text-gray-400 mt-1">Vivo aventuras</p>
-                </button>
+              {/* Divider */}
+              <div className="my-6 flex items-center">
+                <div className="flex-1 border-t border-border"></div>
+                <span className="px-4 text-sm text-muted-foreground font-lore">ou</span>
+                <div className="flex-1 border-t border-border"></div>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-semibold hover:scale-105 transition-transform shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {loading ? 'Criando conta...' : 'Criar Conta'}
-            </button>
-          </form>
+              {/* Login Link */}
+              <div className="text-center">
+                <p className="text-muted-foreground text-sm font-lore">
+                  Já tem uma conta?{' '}
+                  <Link href="/auth/login" className="text-primary hover:text-primary/80 font-semibold transition-colors">
+                    Fazer login
+                  </Link>
+                </p>
+              </div>
 
-          {/* Divider */}
-          <div className="my-6 flex items-center">
-            <div className="flex-1 border-t border-purple-500/30"></div>
-            <span className="px-4 text-sm text-gray-400">ou</span>
-            <div className="flex-1 border-t border-purple-500/30"></div>
+              {/* Back to Home */}
+              <div className="text-center">
+                <Link href="/" className="text-muted-foreground/70 hover:text-muted-foreground text-sm font-lore transition-colors">
+                  ← Voltar para home
+                </Link>
+              </div>
+            </CardContent>
           </div>
-
-          {/* Login Link */}
-          <div className="text-center">
-            <p className="text-gray-400 text-sm">
-              Já tem uma conta?{' '}
-              <Link href="/auth/login" className="text-purple-400 hover:text-purple-300 font-semibold">
-                Fazer login
-              </Link>
-            </p>
-          </div>
-
-          {/* Back to Home */}
-          <div className="text-center mt-6">
-            <Link href="/" className="text-gray-500 hover:text-gray-400 text-sm">
-              ← Voltar para home
-            </Link>
-          </div>
-        </div>
+        </Card>
       </motion.div>
     </main>
   );

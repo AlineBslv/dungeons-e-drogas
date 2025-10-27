@@ -54,7 +54,7 @@ export function AnimatedMessage({ text, isAI = true }: AnimatedMessageProps) {
             transition={{ repeat: Infinity, duration: 1 }}
             className="ml-1 text-gold-500"
           >
-            ✨
+            |
           </motion.span>
         )}
       </span>

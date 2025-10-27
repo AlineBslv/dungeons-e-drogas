@@ -18,12 +18,21 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { exportSessionAsMarkdown, exportSessionAsText, copySessionToClipboard } from '@/lib/export-helpers';
 import { ContextPanel } from '@/components/app/context-panel';
+import GlobalDiceButton from '@/components/dice/GlobalDiceButton';
+import { DiceResult, rollDice } from '@/lib/dice-helpers';
 
 interface Message {
   id: string;
   sender: 'mestre' | 'drogon' | 'jogador';
   content: string;
   timestamp: string | Timestamp;
+  type?: 'message' | 'dice_roll';
+  diceData?: {
+    command: string;
+    result: DiceResult;
+    context?: string;
+    characterName?: string;
+  };
 }
 
 export default function ChatPage() {
@@ -109,6 +118,58 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
+  const handleDiceRollFromFloating = (command: string, result: DiceResult) => {
+    // Adiciona rolagem ao chat
+    const rollMessage: Message = {
+      id: Date.now().toString(),
+      sender: 'mestre',
+      content: '',
+      type: 'dice_roll',
+      diceData: {
+        command,
+        result,
+        characterName: user?.displayName || 'Mestre',
+        context: 'Rolagem rápida',
+      },
+      timestamp: new Date().toISOString(),
+    };
+
+    setMessages(prev => [...prev, rollMessage]);
+  };
+
+  const handleDiceRoll = async (command: string) => {
+    if (!currentCampaign) {
+      alert('Selecione ou crie uma campanha primeiro');
+      return;
+    }
+
+    try {
+      // Rola os dados via API
+      const response = await rollDice(command, {
+        campaignId: currentCampaign.id,
+        userId: user?.uid,
+        characterName: user?.displayName || userProfile?.tier === 'mestre' ? 'Mestre' : 'Jogador',
+        context: 'Rolagem via chat',
+      });
+
+      // Salva rolagem no Firestore
+      await sendMessage(currentCampaign.id, {
+        sender: userProfile?.tier === 'mestre' ? 'mestre' : 'jogador',
+        content: '',
+        type: 'dice_roll',
+        diceData: {
+          command,
+          result: response.result,
+          characterName: user?.displayName || userProfile?.tier === 'mestre' ? 'Mestre' : 'Jogador',
+          context: 'Rolagem via chat',
+        },
+      });
+    } catch (error) {
+      console.error('Erro ao rolar dados:', error);
+      alert('Erro ao rolar dados. Verifique o comando e tente novamente.');
+    }
+  };
+
   const handleSendMessage = async (content: string) => {
     if (!content.trim() || !currentCampaign) {
       if (!currentCampaign) {
@@ -163,10 +224,10 @@ export default function ChatPage() {
 
   if (authLoading || campaignLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <GiDragonHead className="w-20 h-20 text-purple-400 mx-auto mb-4 animate-pulse" />
-          <p className="text-gray-400">Carregando...</p>
+          <GiDragonHead className="w-20 h-20 text-primary mx-auto mb-4 animate-pulse text-glow-gold" />
+          <p className="text-muted-foreground font-lore">Carregando...</p>
         </div>
       </div>
     );
@@ -179,65 +240,74 @@ export default function ChatPage() {
   // Se não há campanha selecionada, mostra seletor
   if (!currentCampaign) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-2xl w-full"
         >
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-8">
-            <GiDragonHead className="w-20 h-20 text-purple-400 mx-auto mb-6" />
-            <h1 className="text-3xl font-bold text-center mb-2">Selecione uma Campanha</h1>
-            <p className="text-gray-400 text-center mb-8">
-              Escolha uma campanha existente ou crie uma nova
-            </p>
+          <div className="bg-grimoire border-primary/30 shadow-arcane rounded-2xl p-8 relative overflow-hidden">
+            <div className="absolute top-3 left-3 w-10 h-10 border-t-2 border-l-2 border-primary/40 rounded-tl-lg"></div>
+            <div className="absolute bottom-3 right-3 w-10 h-10 border-b-2 border-r-2 border-primary/40 rounded-br-lg"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-50"></div>
 
-            {campaigns.length > 0 && (
-              <div className="space-y-3 mb-6">
-                {campaigns.map((campaign) => (
-                  <button
-                    key={campaign.id}
-                    onClick={() => selectCampaign(campaign.id)}
-                    className="w-full bg-gray-900/50 border border-purple-500/30 rounded-lg p-4 hover:border-purple-500 transition-all text-left"
-                  >
-                    <h3 className="font-semibold text-lg">{campaign.title || 'Campanha sem nome'}</h3>
-                    <p className="text-sm text-gray-400 mt-1">{campaign.description || 'Sem descrição'}</p>
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="relative z-10">
+              <GiDragonHead className="w-20 h-20 text-primary mx-auto mb-6 animate-pulse text-glow-gold" />
+              <h1 className="text-3xl font-bold text-center mb-2 font-medieval text-metallic-gold">Selecione uma Campanha</h1>
+              <p className="text-muted-foreground text-center mb-8 font-lore">
+                Escolha uma campanha existente ou crie uma nova
+              </p>
 
-            <button
-              onClick={() => setShowNewCampaignDialog(true)}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center justify-center gap-2"
-            >
-              <FaPlus />
-              Nova Campanha
-            </button>
+              {campaigns.length > 0 && (
+                <div className="space-y-3 mb-6">
+                  {campaigns.map((campaign) => (
+                    <button
+                      key={campaign.id}
+                      onClick={() => selectCampaign(campaign.id)}
+                      className="w-full bg-card/50 border border-border rounded-lg p-4 hover:border-primary/50 hover-lift transition-all text-left"
+                    >
+                      <h3 className="font-semibold text-lg font-medieval text-foreground">{campaign.title || 'Campanha sem nome'}</h3>
+                      <p className="text-sm text-muted-foreground mt-1 font-lore">{campaign.description || 'Sem descrição'}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
 
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="w-full mt-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-all"
-            >
-              Voltar ao Dashboard
-            </button>
+              <Button
+                onClick={() => setShowNewCampaignDialog(true)}
+                className="w-full font-medieval mb-3"
+                size="lg"
+              >
+                <FaPlus className="mr-2" />
+                Nova Campanha
+              </Button>
+
+              <Button
+                onClick={() => router.push('/dashboard')}
+                variant="outline"
+                className="w-full font-medieval"
+                size="lg"
+              >
+                Voltar ao Dashboard
+              </Button>
+            </div>
           </div>
         </motion.div>
 
         {/* Dialog Nova Campanha */}
         <Dialog open={showNewCampaignDialog} onOpenChange={setShowNewCampaignDialog}>
-          <DialogContent className="bg-gray-800/95 border-cyan-500/40">
+          <DialogContent className="bg-grimoire border-primary/30">
             <DialogHeader>
-              <GiDragonHead className="w-16 h-16 text-purple-400 mx-auto mb-4" />
-              <DialogTitle className="text-gray-200 text-center">Selecione uma Campanha</DialogTitle>
-              <DialogDescription className="text-gray-400 text-center">
-                Escolha uma campanha existente ou crie uma nova
+              <GiDragonHead className="w-16 h-16 text-primary mx-auto mb-4 text-glow-gold" />
+              <DialogTitle className="text-foreground text-center font-medieval">Nova Campanha</DialogTitle>
+              <DialogDescription className="text-muted-foreground text-center font-lore">
+                Escolha um nome para sua nova aventura
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 mt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2 font-medieval">
                   Nome da campanha:
                 </label>
                 <Input
@@ -248,8 +318,7 @@ export default function ChatPage() {
                       handleCreateCampaign();
                     }
                   }}
-                  placeholder=""
-                  className="bg-gray-900/50 border-cyan-500/50 text-white focus:border-cyan-400"
+                  placeholder="A Lenda de..."
                   autoFocus
                 />
               </div>
@@ -262,16 +331,16 @@ export default function ChatPage() {
                   setNewCampaignName('');
                 }}
                 variant="outline"
-                className="flex-1 bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                className="flex-1 font-medieval"
               >
                 Cancelar
               </Button>
               <Button
                 onClick={handleCreateCampaign}
                 disabled={!newCampaignName.trim()}
-                className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-semibold"
+                className="flex-1 font-medieval"
               >
-                OK
+                Criar
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -281,63 +350,65 @@ export default function ChatPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white flex flex-col">
+    <main className="min-h-screen flex flex-col">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-10 bg-gray-900/80 backdrop-blur-md border-b border-purple-500/30 p-4"
+        className="sticky top-0 z-10 bg-card/80 backdrop-blur-md border-b border-border p-4"
       >
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
+            <Button
               onClick={() => router.push('/dashboard')}
-              className="p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+              variant="ghost"
+              size="icon"
             >
               <FaArrowLeft className="w-5 h-5" />
-            </button>
-            <GiDragonHead className="w-10 h-10 text-purple-400" />
+            </Button>
+            <GiDragonHead className="w-10 h-10 text-primary text-glow-gold" />
             <div>
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+              <h1 className="text-2xl font-bold font-medieval text-metallic-gold">
                 {currentCampaign.title || 'Chat com Drogon'}
               </h1>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-muted-foreground font-lore">
                 Tom: {currentCampaign.context.tone} • Detalhe: {currentCampaign.context.detail_level}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="relative">
-              <button
+              <Button
                 onClick={() => setShowExportMenu(!showExportMenu)}
-                className="p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+                variant="ghost"
+                size="icon"
                 disabled={messages.length === 0}
               >
                 <FaDownload className="w-5 h-5" />
-              </button>
+              </Button>
               {showExportMenu && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-48 bg-gray-800 border border-purple-500/30 rounded-lg shadow-lg z-50"
+                  className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-arcane z-50"
                 >
                   <button
                     onClick={handleExportMarkdown}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-700 text-sm flex items-center gap-2 rounded-t-lg"
+                    className="w-full px-4 py-2 text-left hover:bg-muted text-sm flex items-center gap-2 rounded-t-lg font-lore transition-colors"
                   >
                     <FaDownload className="w-4 h-4" />
                     Exportar Markdown
                   </button>
                   <button
                     onClick={handleExportText}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-700 text-sm flex items-center gap-2"
+                    className="w-full px-4 py-2 text-left hover:bg-muted text-sm flex items-center gap-2 font-lore transition-colors"
                   >
                     <FaDownload className="w-4 h-4" />
                     Exportar Texto
                   </button>
                   <button
                     onClick={handleCopyToClipboard}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-700 text-sm flex items-center gap-2 rounded-b-lg"
+                    className="w-full px-4 py-2 text-left hover:bg-muted text-sm flex items-center gap-2 rounded-b-lg font-lore transition-colors"
                   >
                     <FaCopy className="w-4 h-4" />
                     Copiar Sessão
@@ -345,12 +416,13 @@ export default function ChatPage() {
                 </motion.div>
               )}
             </div>
-            <button
+            <Button
               onClick={() => setShowSettings(!showSettings)}
-              className="p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+              variant="ghost"
+              size="icon"
             >
               <FaCog className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
         </div>
       </motion.div>
@@ -365,11 +437,11 @@ export default function ChatPage() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-12"
             >
-              <GiDragonHead className="w-24 h-24 text-purple-400/30 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-400 mb-2">
+              <GiDragonHead className="w-24 h-24 text-primary/30 mx-auto mb-4 text-glow-gold" />
+              <h2 className="text-2xl font-bold text-muted-foreground mb-2 font-medieval">
                 Bem-vindo ao Chat com Drogon
               </h2>
-              <p className="text-gray-500">
+              <p className="text-muted-foreground/70 font-lore">
                 Comece sua aventura fazendo uma pergunta ou descrevendo uma cena
               </p>
             </motion.div>
@@ -381,6 +453,8 @@ export default function ChatPage() {
               sender={message.sender}
               content={message.content}
               timestamp={message.timestamp}
+              type={message.type}
+              diceData={message.diceData}
             />
           ))}
 
@@ -390,26 +464,26 @@ export default function ChatPage() {
       </div>
 
       {/* Input Area */}
-      <div className="sticky bottom-0 bg-gray-900/80 backdrop-blur-md border-t border-purple-500/30 p-4">
+      <div className="sticky bottom-0 bg-card/80 backdrop-blur-md border-t border-border p-4">
         <div className="max-w-5xl mx-auto">
-          <ChatInput onSendMessage={handleSendMessage} disabled={isTyping} />
+          <ChatInput onSendMessage={handleSendMessage} onDiceRoll={handleDiceRoll} disabled={isTyping} />
         </div>
       </div>
 
-      {/* Dialog Nova Campanha */}
+      {/* Dialog Nova Campanha (dentro do chat) */}
       <Dialog open={showNewCampaignDialog} onOpenChange={setShowNewCampaignDialog}>
-        <DialogContent className="bg-gray-800/95 border-cyan-500/40">
+        <DialogContent className="bg-grimoire border-primary/30">
           <DialogHeader>
-            <GiDragonHead className="w-16 h-16 text-purple-400 mx-auto mb-4" />
-            <DialogTitle className="text-gray-200 text-center">Selecione uma Campanha</DialogTitle>
-            <DialogDescription className="text-gray-400 text-center">
-              Escolha uma campanha existente ou crie uma nova
+            <GiDragonHead className="w-16 h-16 text-primary mx-auto mb-4 text-glow-gold" />
+            <DialogTitle className="text-foreground text-center font-medieval">Nova Campanha</DialogTitle>
+            <DialogDescription className="text-muted-foreground text-center font-lore">
+              Escolha um nome para sua nova aventura
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 mt-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2 font-medieval">
                 Nome da campanha:
               </label>
               <Input
@@ -420,8 +494,7 @@ export default function ChatPage() {
                     handleCreateCampaign();
                   }
                 }}
-                placeholder=""
-                className="bg-gray-900/50 border-cyan-500/50 text-white focus:border-cyan-400"
+                placeholder="A Lenda de..."
                 autoFocus
               />
             </div>
@@ -434,16 +507,16 @@ export default function ChatPage() {
                 setNewCampaignName('');
               }}
               variant="outline"
-              className="flex-1 bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="flex-1 font-medieval"
             >
               Cancelar
             </Button>
             <Button
               onClick={handleCreateCampaign}
               disabled={!newCampaignName.trim()}
-              className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-semibold"
+              className="flex-1 font-medieval"
             >
-              OK
+              Criar
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -455,6 +528,9 @@ export default function ChatPage() {
           <ContextPanel />
         )}
       </AnimatePresence>
+
+      {/* Botão Flutuante de Dados Global */}
+      <GlobalDiceButton />
     </main>
   );
 }

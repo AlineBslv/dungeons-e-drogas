@@ -1,7 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Home, MessageSquare, Scroll, Settings, Users } from "lucide-react";
+import {
+  GiCastle,
+  GiScrollQuill,
+  GiSwordman,
+  GiScrollUnfurled,
+  GiThreeFriends,
+  GiGearHammer
+} from "react-icons/gi";
 import { cn } from "@/lib/utils";
 import { slideInLeft } from "@/lib/motion-presets";
 
@@ -17,11 +24,12 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { icon: Home, label: "Início", href: "/" },
-  { icon: MessageSquare, label: "Chat", href: "/chat/test", active: true },
-  { icon: Scroll, label: "Campanhas", href: "/campaigns" },
-  { icon: Users, label: "Jogadores", href: "/players" },
-  { icon: Settings, label: "Configurações", href: "/settings" },
+  { icon: GiCastle, label: "Início", href: "/" },
+  { icon: GiScrollQuill, label: "Chat", href: "/chat/test" },
+  { icon: GiSwordman, label: "Personagens", href: "/characters" },
+  { icon: GiScrollUnfurled, label: "Campanhas", href: "/campaigns" },
+  { icon: GiThreeFriends, label: "Jogadores", href: "/players" },
+  { icon: GiGearHammer, label: "Configurações", href: "/settings" },
 ];
 
 /**
