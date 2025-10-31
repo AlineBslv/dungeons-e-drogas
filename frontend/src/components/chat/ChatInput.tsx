@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { FiSend } from "react-icons/fi";
@@ -10,15 +10,33 @@ interface ChatInputProps {
   onSendMessage?: (msg: string) => void;
   onSend?: (msg: string) => void;
   onDiceRoll?: (command: string) => void;
+  onTyping?: (isTyping: boolean) => void;  // Novo: callback para typing indicator
   disabled?: boolean;
 }
 
-export default function ChatInput({ onSendMessage, onSend, onDiceRoll, disabled }: ChatInputProps) {
+export default function ChatInput({ onSendMessage, onSend, onDiceRoll, onTyping, disabled }: ChatInputProps) {
   const [msg, setMsg] = useState("");
   const [showDiceHint, setShowDiceHint] = useState(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup ao desmontar
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      onTyping?.(false);
+    };
+  }, [onTyping]);
 
   const handleSend = () => {
     if (!msg.trim() || disabled) return;
+
+    // Para o indicador de digitação
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    onTyping?.(false);
 
     // Detecta comando /roll
     const rollMatch = msg.match(/^\/roll\s+(.+)$/i);
@@ -43,6 +61,23 @@ export default function ChatInput({ onSendMessage, onSend, onDiceRoll, disabled 
 
     // Mostra hint se começar a digitar /roll
     setShowDiceHint(value.toLowerCase().startsWith('/roll'));
+
+    // Emite evento de typing
+    if (onTyping && value.trim()) {
+      onTyping(true);
+
+      // Clear timeout anterior
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      // Para de digitar após 2 segundos de inatividade
+      typingTimeoutRef.current = setTimeout(() => {
+        onTyping(false);
+      }, 2000);
+    } else if (onTyping && !value.trim()) {
+      onTyping(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

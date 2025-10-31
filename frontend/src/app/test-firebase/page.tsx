@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { auth, db, storage } from '@/lib/firebase';
 
 export default function TestFirebasePage() {
@@ -13,30 +14,38 @@ export default function TestFirebasePage() {
 
   useEffect(() => {
     async function testFirebase() {
-      const newResults: any = {};
+      const newResults = {
+        auth: '⏳ Testando...',
+        firestore: '⏳ Testando...',
+        storage: '⏳ Testando...',
+        config: '⏳ Verificando...'
+      };
 
       // Test Auth
       try {
         await auth.authStateReady();
         newResults.auth = '✅ Firebase Auth conectado';
-      } catch (error: any) {
-        newResults.auth = `❌ Auth Error: ${error.message}`;
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        newResults.auth = `❌ Auth Error: ${errorMessage}`;
       }
 
       // Test Firestore
       try {
         await db.app.automaticDataCollectionEnabled;
         newResults.firestore = '✅ Firestore conectado';
-      } catch (error: any) {
-        newResults.firestore = `❌ Firestore Error: ${error.message}`;
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        newResults.firestore = `❌ Firestore Error: ${errorMessage}`;
       }
 
       // Test Storage
       try {
         const bucket = storage.app.options.storageBucket;
         newResults.storage = `✅ Storage conectado: ${bucket}`;
-      } catch (error: any) {
-        newResults.storage = `❌ Storage Error: ${error.message}`;
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        newResults.storage = `❌ Storage Error: ${errorMessage}`;
       }
 
       // Check Config
@@ -94,9 +103,9 @@ export default function TestFirebasePage() {
             <h2 className="text-xl font-semibold mb-3">⚠️ Se houver erro auth/configuration-not-found:</h2>
             <ol className="text-sm space-y-2 list-decimal list-inside">
               <li>Acesse: <a href="https://console.firebase.google.com/project/dungeons-e-drogas/authentication/providers" target="_blank" className="text-purple-400 underline">Firebase Console → Authentication</a></li>
-              <li>Clique em <strong>"Sign-in method"</strong> ou <strong>"Métodos de login"</strong></li>
-              <li>Ative o provedor <strong>"Email/Password"</strong> (Email/Senha)</li>
-              <li>Clique em <strong>"Enable"</strong> (Ativar)</li>
+              <li>Clique em <strong>&quot;Sign-in method&quot;</strong> ou <strong>&quot;Métodos de login&quot;</strong></li>
+              <li>Ative o provedor <strong>&quot;Email/Password&quot;</strong> (Email/Senha)</li>
+              <li>Clique em <strong>&quot;Enable&quot;</strong> (Ativar)</li>
               <li>Salve as alterações</li>
               <li>Volte aqui e recarregue a página</li>
             </ol>
@@ -104,9 +113,9 @@ export default function TestFirebasePage() {
         </div>
 
         <div className="mt-8 text-center">
-          <a href="/" className="text-purple-400 hover:text-purple-300">
+          <Link href="/" className="text-purple-400 hover:text-purple-300">
             ← Voltar para home
-          </a>
+          </Link>
         </div>
       </div>
     </main>

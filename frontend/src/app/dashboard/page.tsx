@@ -4,12 +4,14 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCampaign } from '@/contexts/CampaignContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { motion } from 'framer-motion';
 import { GiDragonHead, GiSwordman, GiScrollQuill, GiDiceTwentyFacesTwenty, GiCrystalBall, GiCastle } from 'react-icons/gi';
 import { FaUserShield, FaSignOutAlt, FaPlus, FaComments, FaClock } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import GlobalDiceButton from '@/components/dice/GlobalDiceButton';
+import { CreateCampaignDialog } from '@/components/campaign/CreateCampaignDialog';
 import { collection, query, orderBy, limit, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -25,8 +27,10 @@ interface CampaignWithStats {
 export default function DashboardPage() {
   const { user, userProfile, loading, logout } = useAuth();
   const { campaigns, selectCampaign } = useCampaign();
+  const { isHalloween } = useTheme();
   const router = useRouter();
   const [campaignsWithStats, setCampaignsWithStats] = useState<CampaignWithStats[]>([]);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -94,10 +98,6 @@ export default function DashboardPage() {
     router.push('/chat');
   };
 
-  const handleNewCampaign = () => {
-    router.push('/chat');
-  };
-
   const handleLogout = async () => {
     try {
       console.log('Iniciando logout do dashboard...')
@@ -153,12 +153,14 @@ export default function DashboardPage() {
       >
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <GiDragonHead className="w-16 h-16 text-primary text-glow-gold" />
+            <GiDragonHead className={`w-16 h-16 text-primary ${isHalloween ? 'text-horror-necrotic animate-horror-pulse' : 'text-glow-gold'}`} />
             <div>
-              <h1 className="text-4xl font-bold font-medieval text-metallic-gold">
-                Dashboard
+              <h1 className={`text-4xl font-bold font-medieval ${isHalloween ? 'text-horror-necrotic' : 'text-metallic-gold'}`}>
+                {isHalloween ? 'Cripta Sombria' : 'Dashboard'}
               </h1>
-              <p className="text-muted-foreground mt-1 font-lore">Bem-vindo, {userProfile.name}!</p>
+              <p className="text-muted-foreground mt-1 font-lore">
+                {isHalloween ? `Bem-vindo à escuridão, ${userProfile.name}...` : `Bem-vindo, ${userProfile.name}!`}
+              </p>
             </div>
           </div>
           <Button
@@ -234,17 +236,26 @@ export default function DashboardPage() {
         transition={{ duration: 0.6, delay: 0.2 }}
         className="max-w-7xl mx-auto"
       >
-        <h3 className="text-2xl font-bold mb-6 font-medieval text-metallic-gold">Ações Rápidas</h3>
+        <h3 className={`text-2xl font-bold mb-6 font-medieval ${isHalloween ? 'text-horror-spectral' : 'text-metallic-gold'}`}>
+          {isHalloween ? 'Rituais Sombrios' : 'Ações Rápidas'}
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isMaster ? (
             <>
-              <Card className="bg-card/50 backdrop-blur border-border hover:border-primary/50 transition-all hover-lift cursor-pointer group">
+              <Card
+                onClick={() => router.push('/campaigns')}
+                className="bg-card/50 backdrop-blur border-border hover:border-primary/50 transition-all hover-lift cursor-pointer group"
+              >
                 <CardHeader>
-                  <GiCastle className="w-12 h-12 text-primary mb-3 group-hover:text-glow-gold transition-all" />
-                  <CardTitle className="text-xl font-medieval">Nova Campanha</CardTitle>
+                  <GiCastle className={`w-12 h-12 text-primary mb-3 transition-all ${isHalloween ? 'group-hover:text-horror-spectral' : 'group-hover:text-glow-gold'}`} />
+                  <CardTitle className="text-xl font-medieval">
+                    {isHalloween ? 'Sessões Assombradas' : 'Campanhas Multiplayer'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="font-lore">Crie uma nova aventura épica</CardDescription>
+                  <CardDescription className="font-lore">
+                    {isHalloween ? 'Invoque jogadores para a escuridão' : 'Gerencie sessões com jogadores'}
+                  </CardDescription>
                 </CardContent>
               </Card>
               <Card
@@ -252,20 +263,28 @@ export default function DashboardPage() {
                 className="bg-card/50 backdrop-blur border-border hover:border-primary/50 transition-all hover-lift cursor-pointer group"
               >
                 <CardHeader>
-                  <GiCrystalBall className="w-12 h-12 text-primary mb-3 group-hover:text-glow-gold transition-all" />
-                  <CardTitle className="text-xl font-medieval">Chat com Drogon</CardTitle>
+                  <GiCrystalBall className={`w-12 h-12 text-primary mb-3 transition-all ${isHalloween ? 'group-hover:text-horror-spectral animate-horror-float' : 'group-hover:text-glow-gold'}`} />
+                  <CardTitle className="text-xl font-medieval">
+                    {isHalloween ? 'Oráculo das Sombras' : 'Chat com Drogon'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="font-lore">Converse com o narrador IA</CardDescription>
+                  <CardDescription className="font-lore">
+                    {isHalloween ? 'Consulte o narrador das trevas' : 'Converse individualmente com IA'}
+                  </CardDescription>
                 </CardContent>
               </Card>
               <Card className="bg-card/50 backdrop-blur border-border hover:border-primary/50 transition-all hover-lift cursor-pointer group">
                 <CardHeader>
-                  <GiScrollQuill className="w-12 h-12 text-primary mb-3 group-hover:text-glow-gold transition-all" />
-                  <CardTitle className="text-xl font-medieval">Base Cognitiva</CardTitle>
+                  <GiScrollQuill className={`w-12 h-12 text-primary mb-3 transition-all ${isHalloween ? 'group-hover:text-horror-spectral' : 'group-hover:text-glow-gold'}`} />
+                  <CardTitle className="text-xl font-medieval">
+                    {isHalloween ? 'Grimório Profano' : 'Base Cognitiva'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="font-lore">Consulte regras e lore de D&D</CardDescription>
+                  <CardDescription className="font-lore">
+                    {isHalloween ? 'Pergaminhos malditos e lore' : 'Consulte regras e lore de D&D'}
+                  </CardDescription>
                 </CardContent>
               </Card>
             </>
@@ -276,11 +295,15 @@ export default function DashboardPage() {
                 className="bg-card/50 backdrop-blur border-border hover:border-primary/50 transition-all hover-lift cursor-pointer group"
               >
                 <CardHeader>
-                  <GiCastle className="w-12 h-12 text-primary mb-3 group-hover:text-glow-gold transition-all" />
-                  <CardTitle className="text-xl font-medieval">Minhas Campanhas</CardTitle>
+                  <GiCastle className={`w-12 h-12 text-primary mb-3 transition-all ${isHalloween ? 'group-hover:text-horror-spectral' : 'group-hover:text-glow-gold'}`} />
+                  <CardTitle className="text-xl font-medieval">
+                    {isHalloween ? 'Jornadas Malditas' : 'Minhas Campanhas'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="font-lore">Veja suas aventuras ativas</CardDescription>
+                  <CardDescription className="font-lore">
+                    {isHalloween ? 'Suas aventuras sombrias' : 'Veja suas aventuras ativas'}
+                  </CardDescription>
                 </CardContent>
               </Card>
               <Card
@@ -288,20 +311,28 @@ export default function DashboardPage() {
                 className="bg-card/50 backdrop-blur border-border hover:border-primary/50 transition-all hover-lift cursor-pointer group"
               >
                 <CardHeader>
-                  <GiScrollQuill className="w-12 h-12 text-primary mb-3 group-hover:text-glow-gold transition-all" />
-                  <CardTitle className="text-xl font-medieval">Fichas de Personagem</CardTitle>
+                  <GiScrollQuill className={`w-12 h-12 text-primary mb-3 transition-all ${isHalloween ? 'group-hover:text-horror-spectral' : 'group-hover:text-glow-gold'}`} />
+                  <CardTitle className="text-xl font-medieval">
+                    {isHalloween ? 'Almas Perdidas' : 'Fichas de Personagem'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="font-lore">Gerencie seus personagens</CardDescription>
+                  <CardDescription className="font-lore">
+                    {isHalloween ? 'Seus heróis amaldiçoados' : 'Gerencie seus personagens'}
+                  </CardDescription>
                 </CardContent>
               </Card>
               <Card className="bg-card/50 backdrop-blur border-border hover:border-primary/50 transition-all hover-lift cursor-pointer group">
                 <CardHeader>
-                  <GiDiceTwentyFacesTwenty className="w-12 h-12 text-primary mb-3 group-hover:text-glow-gold transition-all" />
-                  <CardTitle className="text-xl font-medieval">Rolagens Rápidas</CardTitle>
+                  <GiDiceTwentyFacesTwenty className={`w-12 h-12 text-primary mb-3 transition-all ${isHalloween ? 'group-hover:text-horror-spectral animate-horror-tremor' : 'group-hover:text-glow-gold'}`} />
+                  <CardTitle className="text-xl font-medieval">
+                    {isHalloween ? 'Dados do Destino' : 'Rolagens Rápidas'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="font-lore">Role dados virtualmente</CardDescription>
+                  <CardDescription className="font-lore">
+                    {isHalloween ? 'Teste sua sorte nas trevas' : 'Role dados virtualmente'}
+                  </CardDescription>
                 </CardContent>
               </Card>
             </>
@@ -309,8 +340,8 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* Campanhas Recentes - Apenas para Mestres */}
-      {isMaster && campaignsWithStats.length > 0 && (
+      {/* Últimas Campanhas */}
+      {campaignsWithStats.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -318,29 +349,38 @@ export default function DashboardPage() {
           className="max-w-7xl mx-auto mt-12"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold font-medieval text-metallic-gold flex items-center gap-2">
-              <FaComments className="text-primary" />
-              Conversas com Drogon
-            </h3>
-            <Button onClick={handleNewCampaign} className="flex items-center gap-2">
-              <FaPlus />
-              Nova Conversa
+            <div>
+              <h3 className={`text-2xl font-bold font-medieval flex items-center gap-2 ${isHalloween ? 'text-horror-blood animate-horror-flicker' : 'text-metallic-gold'}`}>
+                <GiCastle className={`${isHalloween ? 'text-horror-blood' : 'text-primary'}`} />
+                {isHalloween ? 'Histórias Macabras' : 'Últimas Campanhas'}
+              </h3>
+              <p className="text-sm text-muted-foreground font-lore mt-1">
+                {isHalloween ? 'Contos de terror recentes...' : 'Suas campanhas recentes'}
+              </p>
+            </div>
+            <Button
+              onClick={() => router.push('/campaigns')}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              Ver mais
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {campaignsWithStats.map((campaign, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {campaignsWithStats.slice(0, 3).map((campaign, index) => (
               <motion.div
                 key={campaign.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 * index }}
+                className="h-full"
               >
                 <Card
                   onClick={() => handleContinueChat(campaign.id)}
-                  className="bg-card/50 backdrop-blur border-border hover:border-primary/50 transition-all hover-lift cursor-pointer group"
+                  className="bg-card/50 backdrop-blur border-border hover:border-primary/50 transition-all hover-lift cursor-pointer group h-full flex flex-col"
                 >
-                  <CardHeader>
+                  <CardHeader className="flex-shrink-0">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <CardTitle className="text-lg font-medieval text-foreground group-hover:text-primary transition-colors">
@@ -353,13 +393,13 @@ export default function DashboardPage() {
                       <GiDragonHead className="w-8 h-8 text-primary/40 group-hover:text-primary group-hover:text-glow-gold transition-all" />
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex-1 flex flex-col justify-between">
                     {campaign.lastMessage && (
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-2 font-lore">
                         {campaign.lastMessage}...
                       </p>
                     )}
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
                       <div className="flex items-center gap-4">
                         <span className="flex items-center gap-1">
                           <FaComments className="h-3 w-3" />
@@ -397,6 +437,9 @@ export default function DashboardPage() {
 
       {/* Botão Flutuante de Dados Global */}
       <GlobalDiceButton />
+
+      {/* Dialog de Criação de Campanha */}
+      <CreateCampaignDialog open={showCreateDialog} onOpenChange={setShowCreateDialog} />
     </main>
   );
 }

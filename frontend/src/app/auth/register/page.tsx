@@ -9,6 +9,7 @@ import { FaUserShield } from 'react-icons/fa';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function RegisterPage() {
@@ -43,8 +44,9 @@ export default function RegisterPage() {
     try {
       await signUp(email, password, name, tier);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Erro ao criar conta');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar conta';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -89,9 +91,9 @@ export default function RegisterPage() {
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="block text-sm font-medium text-foreground font-medieval">
+                  <Label htmlFor="name" className="block text-sm font-medium text-foreground font-medieval">
                     Nome
-                  </label>
+                  </Label>
                   <Input
                     id="name"
                     type="text"
@@ -103,9 +105,9 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-foreground font-medieval">
+                  <Label htmlFor="email" className="block text-sm font-medium text-foreground font-medieval">
                     Email
-                  </label>
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -117,9 +119,9 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="password" className="block text-sm font-medium text-foreground font-medieval">
+                  <Label htmlFor="password" className="block text-sm font-medium text-foreground font-medieval">
                     Senha
-                  </label>
+                  </Label>
                   <Input
                     id="password"
                     type="password"
@@ -131,9 +133,9 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground font-medieval">
+                  <Label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground font-medieval">
                     Confirmar Senha
-                  </label>
+                  </Label>
                   <Input
                     id="confirmPassword"
                     type="password"
@@ -146,9 +148,9 @@ export default function RegisterPage() {
 
                 {/* User Tier Selection */}
                 <div className="space-y-3">
-                  <label className="block text-sm font-medium text-foreground font-medieval">
+                  <Label className="block text-sm font-medium text-foreground font-medieval">
                     Escolha seu papel
-                  </label>
+                  </Label>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"

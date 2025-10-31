@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 7. Crie cenários imersivos e envolventes
 
 **Histórico recente:**
-${history?.slice(-5).map((h: any) => `${h.role}: ${h.content}`).join('\n') || 'Nenhum histórico anterior'}
+${history?.slice(-5).map((h: { role: string; content: string }) => `${h.role}: ${h.content}`).join('\n') || 'Nenhum histórico anterior'}
 
 Agora responda à mensagem do mestre:`;
 
@@ -68,10 +68,11 @@ Agora responda à mensagem do mestre:`;
       timestamp: new Date().toISOString(),
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
     console.error('Erro ao processar chat:', error);
     return NextResponse.json(
-      { error: 'Erro ao processar mensagem', details: error.message },
+      { error: 'Erro ao processar mensagem', details: errorMessage },
       { status: 500 }
     );
   }

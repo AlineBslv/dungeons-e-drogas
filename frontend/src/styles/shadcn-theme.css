@@ -1,0 +1,84 @@
+/**
+ * Dungeons & Drogas - Shadcn UI Theme
+ * Dark Medieval Grimoire Aesthetic
+ */
+
+@layer base {
+  :root {
+    /* Light mode (não usado, mas mantido para compatibilidade) */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark Fantasy Theme - Grimoire Drogon */
+    --background: 30 25% 4%;          /* #0C0B09 - dark-100 */
+    --foreground: 42 15% 91%;         /* #EDE9E2 - text-primary */
+
+    --card: 30 15% 9%;                /* #181511 - dark-300 */
+    --card-foreground: 42 15% 91%;
+
+    --popover: 30 15% 9%;
+    --popover-foreground: 42 15% 91%;
+
+    --primary: 42 47% 57%;            /* #C5A75B - gold-500 */
+    --primary-foreground: 30 25% 4%;
+
+    --secondary: 30 15% 13%;          /* #221E1A - dark-500 */
+    --secondary-foreground: 42 15% 91%;
+
+    --muted: 30 15% 13%;
+    --muted-foreground: 42 10% 67%;   /* #B0ADA7 - text-secondary */
+
+    --accent: 42 41% 58%;             /* #B89E58 - gold-300 */
+    --accent-foreground: 30 25% 4%;
+
+    --destructive: 0 51% 31%;         /* #762B28 - ruby */
+    --destructive-foreground: 42 15% 91%;
+
+    --success: 150 34% 35%;           /* #3E775A - emerald */
+    --success-foreground: 42 15% 91%;
+
+    /* Dice Roll Colors */
+    --dice-critical: 150 60% 45%;     /* #26B566 - verde vibrante para críticos */
+    --dice-critical-bg: 150 60% 15%;  /* #0A3322 - fundo escuro verde */
+    --dice-failure: 0 70% 45%;        /* #CC2E2E - vermelho vibrante para falhas */
+    --dice-failure-bg: 0 60% 15%;     /* #330A0A - fundo escuro vermelho */
+    --dice-normal: 42 41% 58%;        /* #B89E58 - dourado normal */
+    --dice-normal-bg: 30 20% 12%;     /* #241F1A - fundo escuro dourado */
+
+    --border: 30 20% 18%;             /* #38322C - border */
+    --input: 30 20% 18%;
+    --ring: 42 47% 57%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

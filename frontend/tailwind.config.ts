@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 import themeTokens from "./tokens/theme.json";
 
 const config: Config = {
-  darkMode: ["class"],
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -67,6 +67,16 @@ const config: Config = {
           foreground: "hsl(var(--info-foreground))",
         },
 
+        // Dice Roll Colors
+        dice: {
+          critical: "hsl(var(--dice-critical))",
+          "critical-bg": "hsl(var(--dice-critical-bg))",
+          failure: "hsl(var(--dice-failure))",
+          "failure-bg": "hsl(var(--dice-failure-bg))",
+          normal: "hsl(var(--dice-normal))",
+          "normal-bg": "hsl(var(--dice-normal-bg))",
+        },
+
         // Dark Medieval Palette (Custom Theme)
         dark: {
           100: themeTokens.colors.dark["100"],
@@ -106,6 +116,14 @@ const config: Config = {
         "dragon-fire": "#F97316",   // Laranja dramático
         "potion-green": "#10B981",  // Verde de poção
         "treasure-gold": "#FBBF24", // Dourado de tesouro
+
+        // Horror Theme Colors
+        horror: {
+          purple: "hsl(var(--horror-purple))",    // Necrotic purple
+          blood: "hsl(var(--horror-blood))",      // Blood red
+          spectral: "hsl(var(--horror-spectral))", // Spectral green
+          shadow: "hsl(var(--horror-shadow))",    // Deep shadow
+        },
 
         // Legacy aliases (para compatibilidade)
         parchment: themeTokens.colors.text.primary,
@@ -151,6 +169,9 @@ const config: Config = {
         'arcane-intense': '0 8px 32px hsl(var(--accent) / 0.6)',
         'ruby': '0 4px 16px hsl(var(--destructive) / 0.5)',
         'emerald': '0 4px 16px hsl(var(--success) / 0.4)',
+        // Horror shadows
+        'horror': '0 4px 20px hsl(var(--horror-shadow) / 0.6), 0 8px 40px hsl(var(--horror-shadow) / 0.4)',
+        'horror-purple': '0 0 15px hsl(var(--horror-purple) / 0.5), inset 0 0 10px hsl(var(--horror-purple) / 0.2)',
       },
       transitionDuration: {
         'instant': '100ms',

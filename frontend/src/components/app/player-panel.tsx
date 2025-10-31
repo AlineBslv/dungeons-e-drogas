@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { staggerContainer, staggerItem } from "@/lib/motion-presets";
 import {
   CharacterSheet,
-  getPlayerCharacterSheets,
   getCampaignCharacterSheets,
 } from "@/lib/firestore-helpers";
 import { useAuth } from "@/contexts/AuthContext";
@@ -156,6 +155,7 @@ export function PlayerPanel({
       <motion.div variants={staggerItem}>
         <PlayerDicePanel
           characterName={displayName}
+          character={character || undefined}
           characterStats={character ? {
             strength: character.attributes.strength,
             dexterity: character.attributes.dexterity,

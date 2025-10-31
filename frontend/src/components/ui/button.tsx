@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow hover:shadow-glow hover:-translate-y-0.5 active:translate-y-0 active:shadow",
         drogon:
-          "bg-gradient-to-br from-gold-500 to-gold-300 text-dark-100 font-semibold shadow-md hover:shadow-glow-intense hover:-translate-y-1 active:translate-y-0 active:shadow-md",
+          "bg-primary text-primary-foreground font-semibold shadow-md hover:shadow-glow-intense hover:-translate-y-1 active:translate-y-0 active:shadow-md [background:linear-gradient(135deg,#C5A75B_0%,#B89E58_100%)]",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-dark-500/80 hover:border-gold-300 border border-border active:bg-dark-500 active:scale-95",
         destructive:

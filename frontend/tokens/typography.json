@@ -1,0 +1,45 @@
+{
+  "fonts": {
+    "display": {
+      "family": "Cinzel Decorative",
+      "weights": [400, 700],
+      "variable": "--font-medieval",
+      "usage": "Títulos, campanhas, cabeçalhos principais"
+    },
+    "narrative": {
+      "family": "Libre Baskerville",
+      "weights": [400, 700],
+      "variable": "--font-lore",
+      "usage": "Mensagens IA, textos narrativos, parágrafos"
+    },
+    "ui": {
+      "family": "Inter",
+      "weights": [400, 500, 600, 700],
+      "variable": "--font-ui",
+      "usage": "Botões, labels, interface, menu"
+    }
+  },
+  "sizes": {
+    "display-lg": "3.75rem",
+    "display-md": "3rem",
+    "display-sm": "2.25rem",
+    "h1": "2rem",
+    "h2": "1.5rem",
+    "h3": "1.25rem",
+    "body": "1rem",
+    "body-sm": "0.875rem",
+    "caption": "0.75rem"
+  },
+  "lineHeight": {
+    "tight": "1.25",
+    "normal": "1.5",
+    "relaxed": "1.65",
+    "loose": "1.75"
+  },
+  "letterSpacing": {
+    "tight": "-0.02em",
+    "normal": "0",
+    "wide": "0.02em",
+    "wider": "0.05em"
+  }
+}

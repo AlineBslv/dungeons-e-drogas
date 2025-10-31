@@ -8,6 +8,7 @@ import { GiDragonHead } from 'react-icons/gi';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function LoginPage() {
@@ -27,8 +28,9 @@ export default function LoginPage() {
     try {
       await signIn(email, password);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao fazer login';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -73,9 +75,9 @@ export default function LoginPage() {
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-foreground font-medieval">
+                  <Label htmlFor="email" className="block text-sm font-medium text-foreground font-medieval">
                     Email
-                  </label>
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -87,9 +89,9 @@ export default function LoginPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="password" className="block text-sm font-medium text-foreground font-medieval">
+                  <Label htmlFor="password" className="block text-sm font-medium text-foreground font-medieval">
                     Senha
-                  </label>
+                  </Label>
                   <Input
                     id="password"
                     type="password"

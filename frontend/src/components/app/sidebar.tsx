@@ -71,7 +71,7 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="absolute bottom-4 left-0 right-0 px-4">
         <div className="hidden sm:block p-3 rounded-lg bg-dark-500/50 border border-gold-500/20">
           <p className="text-xs font-lore text-text-secondary italic">
-            "O conhecimento é poder, Mestre."
+            &quot;O conhecimento é poder, Mestre.&quot;
           </p>
           <p className="text-xs text-gold-500 mt-1 font-ui">— Drogon</p>
         </div>

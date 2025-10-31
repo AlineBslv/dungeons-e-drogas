@@ -19,7 +19,8 @@ const CONTEXT_VALUES = {
     'dark': 'Sombrio - dramático, misterioso',
     'comic': 'Cômico - leve, sarcástico, bem-humorado',
     'neutral': 'Neutro - conversa padrão',
-    'mystical': 'Místico - arcano, sábio, enigmático'
+    'mystical': 'Místico - arcano, sábio, enigmático',
+    'horror': 'Horror - terror, suspense, sobrenatural'
   },
 
   detail_level: {
@@ -92,7 +93,8 @@ const TEMPERATURE_BY_TONE = {
   'dark': 0.7,
   'comic': 0.9,
   'neutral': 0.5,
-  'mystical': 0.7
+  'mystical': 0.7,
+  'horror': 0.85  // Alta criatividade para gerar suspense imprevisível
 };
 
 /**

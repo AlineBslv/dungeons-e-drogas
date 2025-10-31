@@ -6,7 +6,17 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pm2:start": "pm2 start ecosystem.config.js --env production",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
+    "pm2:restart": "pm2 restart ecosystem.config.js",
+    "pm2:reload": "pm2 reload ecosystem.config.js",
+    "pm2:delete": "pm2 delete ecosystem.config.js",
+    "pm2:logs": "pm2 logs dungeons-drogas-backend",
+    "pm2:monit": "pm2 monit",
+    "pm2:status": "pm2 status",
+    "prod": "NODE_ENV=production node index.js",
+    "health": "curl http://localhost:4000/health"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +33,9 @@
     "mime-types": "^3.0.1",
     "multer": "^2.0.2",
     "node-fetch": "^2.7.0",
-    "pdf-parse": "^2.4.3"
+    "pdf-parse": "^2.4.3",
+    "pm2": "^6.0.13",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

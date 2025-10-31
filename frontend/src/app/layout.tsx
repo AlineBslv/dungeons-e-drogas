@@ -4,7 +4,10 @@ import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CampaignProvider } from "@/contexts/CampaignContext";
 import { NavigationProvider } from "@/contexts/NavigationContext";
+import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { Navbar } from "@/components/app/navbar";
+import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/app/theme-provider";
 
 // Fonte Display - Títulos e cabeçalhos
 const cinzelDecorative = Cinzel_Decorative({
@@ -97,6 +100,24 @@ export const metadata: Metadata = {
   },
 };
 
+function ThemeWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <CampaignProvider>
+        <ThemeContextProvider>
+          <ThemeProvider>
+            <NavigationProvider>
+              <Navbar />
+              <main>{children}</main>
+              <Toaster />
+            </NavigationProvider>
+          </ThemeProvider>
+        </ThemeContextProvider>
+      </CampaignProvider>
+    </AuthProvider>
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -107,14 +128,7 @@ export default function RootLayout({
       <body
         className={`${cinzelDecorative.variable} ${libreBaskerville.variable} ${inter.variable} antialiased font-ui`}
       >
-        <AuthProvider>
-          <CampaignProvider>
-            <NavigationProvider>
-              <Navbar />
-              <main>{children}</main>
-            </NavigationProvider>
-          </CampaignProvider>
-        </AuthProvider>
+        <ThemeWrapper>{children}</ThemeWrapper>
       </body>
     </html>
   );

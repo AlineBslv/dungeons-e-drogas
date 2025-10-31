@@ -2,10 +2,13 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
+import { onSnapshot, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import {
   createCampaign,
   getCampaign,
   updateCampaign,
+  deleteCampaign as deleteCampaignFromFirestore,
   getUserCampaigns,
   Campaign,
   CampaignContext as CampaignContextType,
@@ -17,6 +20,8 @@ interface CampaignProviderState {
   loading: boolean;
   createNewCampaign: (title: string, description?: string, context?: Partial<CampaignContextType>) => Promise<string>;
   selectCampaign: (campaignId: string) => Promise<void>;
+  deselectCampaign: () => void;
+  deleteCampaign: (campaignId: string) => Promise<void>;
   updateCampaignContext: (context: Partial<CampaignContextType>) => Promise<void>;
   refreshCampaigns: () => Promise<void>;
 }
@@ -28,10 +33,12 @@ export function CampaignProvider({ children }: { children: ReactNode }) {
   const [currentCampaign, setCurrentCampaign] = useState<(Campaign & { id: string }) | null>(null);
   const [campaigns, setCampaigns] = useState<(Campaign & { id: string })[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentCampaignId, setCurrentCampaignId] = useState<string | null>(null);
 
   // Carrega campanhas do usuário
   const refreshCampaigns = async () => {
     if (!user || !userProfile) {
+      console.log('[CampaignContext] refreshCampaigns: user ou userProfile não disponível');
       setCampaigns([]);
       setLoading(false);
       return;
@@ -39,10 +46,12 @@ export function CampaignProvider({ children }: { children: ReactNode }) {
 
     try {
       const isMaster = userProfile.tier === 'mestre';
+      console.log('[CampaignContext] Carregando campanhas para:', user.uid, 'isMaster:', isMaster);
       const userCampaigns = await getUserCampaigns(user.uid, isMaster);
+      console.log('[CampaignContext] Campanhas carregadas:', userCampaigns.length, userCampaigns);
       setCampaigns(userCampaigns);
     } catch (error) {
-      console.error('Erro ao carregar campanhas:', error);
+      console.error('[CampaignContext] Erro ao carregar campanhas:', error);
     } finally {
       setLoading(false);
     }
@@ -50,6 +59,7 @@ export function CampaignProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     refreshCampaigns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, userProfile]);
 
   const createNewCampaign = async (
@@ -77,7 +87,6 @@ export function CampaignProvider({ children }: { children: ReactNode }) {
       }
 
       const campaignData: any = {
-        title,
         context: campaignContext,
       };
 
@@ -86,7 +95,7 @@ export function CampaignProvider({ children }: { children: ReactNode }) {
         campaignData.description = description;
       }
 
-      const campaignId = await createCampaign(user.uid, campaignData);
+      const campaignId = await createCampaign(user.uid, title, campaignData);
 
       await refreshCampaigns();
       return campaignId;
@@ -104,9 +113,59 @@ export function CampaignProvider({ children }: { children: ReactNode }) {
       const campaign = await getCampaign(campaignId);
       if (campaign) {
         setCurrentCampaign({ id: campaignId, ...campaign });
+        setCurrentCampaignId(campaignId);
       }
     } catch (error) {
       console.error('Erro ao selecionar campanha:', error);
+    }
+  };
+
+  // Listener real-time para currentCampaign
+  useEffect(() => {
+    if (!currentCampaignId) {
+      setCurrentCampaign(null);
+      return;
+    }
+
+    console.log('[CampaignContext] Iniciando listener real-time para campanha:', currentCampaignId);
+
+    const campaignRef = doc(db, 'campaigns', currentCampaignId);
+    const unsubscribe = onSnapshot(campaignRef, (snapshot) => {
+      if (snapshot.exists()) {
+        console.log('[CampaignContext] Campanha atualizada:', snapshot.data());
+        setCurrentCampaign({ id: snapshot.id, ...snapshot.data() } as Campaign & { id: string });
+      } else {
+        console.warn('[CampaignContext] Campanha não encontrada:', currentCampaignId);
+        setCurrentCampaign(null);
+      }
+    });
+
+    return () => {
+      console.log('[CampaignContext] Removendo listener para campanha:', currentCampaignId);
+      unsubscribe();
+    };
+  }, [currentCampaignId]);
+
+  const deselectCampaign = () => {
+    setCurrentCampaign(null);
+    setCurrentCampaignId(null);
+  };
+
+  const deleteCampaign = async (campaignId: string) => {
+    try {
+      console.log('[CampaignContext] Deletando campanha:', campaignId);
+      await deleteCampaignFromFirestore(campaignId);
+
+      // Se a campanha deletada era a atual, desseleciona
+      if (currentCampaign?.id === campaignId) {
+        setCurrentCampaign(null);
+      }
+
+      // Atualiza lista de campanhas
+      await refreshCampaigns();
+    } catch (error) {
+      console.error('[CampaignContext] Erro ao deletar campanha:', error);
+      throw error;
     }
   };
 
@@ -134,6 +193,8 @@ export function CampaignProvider({ children }: { children: ReactNode }) {
         loading,
         createNewCampaign,
         selectCampaign,
+        deselectCampaign,
+        deleteCampaign,
         updateCampaignContext,
         refreshCampaigns,
       }}

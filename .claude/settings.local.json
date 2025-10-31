@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npm install:*)",
+      "Bash(node:*)",
+      "Bash(npm run dev:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(curl:*)",
+      "Bash(npm run pm2:logs:*)",
+      "Bash(npm run pm2:delete:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill //F //PID 24096)",
+      "Bash(npm run pm2:start:*)",
+      "Bash(npm run pm2:status:*)",
+      "Bash(npm run pm2:restart:*)",
+      "Bash(npm run pm2:stop:*)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout /t 10)",
+      "Bash(git restore:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

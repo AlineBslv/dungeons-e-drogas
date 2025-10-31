@@ -18,14 +18,18 @@ export interface ContextPanelProps {
   className?: string;
 }
 
-type ToneType = 'epic' | 'casual' | 'horror';
+type ToneType = 'epic' | 'casual' | 'horror' | 'dark' | 'comic' | 'neutral' | 'mystical';
 type DetailLevelType = 'low' | 'medium' | 'high';
 type LanguageType = 'pt-BR' | 'en-US' | 'es-ES';
 
 const TONE_MAP: Record<string, ToneType> = {
-  'Épico': 'epic',
-  'Casual': 'casual',
-  'Sombrio': 'horror',
+  '✨ Épico': 'epic',
+  '😄 Casual': 'casual',
+  '🎃 Horror': 'horror',
+  '🌑 Sombrio': 'dark',
+  '🎭 Cômico': 'comic',
+  '⚖️ Neutro': 'neutral',
+  '🔮 Místico': 'mystical',
 };
 
 const DETAIL_MAP: Record<string, DetailLevelType> = {

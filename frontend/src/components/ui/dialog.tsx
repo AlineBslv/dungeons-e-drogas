@@ -4,7 +4,6 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { modalArcane } from "@/lib/motion-presets";
 
 export interface DialogProps {
   open: boolean;
@@ -12,8 +11,9 @@ export interface DialogProps {
   children: React.ReactNode;
 }
 
-export interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DialogContentProps {
   children: React.ReactNode;
+  className?: string;
 }
 
 export interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -62,20 +62,19 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
   );
 }
 
-export function DialogContent({ children, className, ...props }: DialogContentProps) {
+export function DialogContent({ children, className }: DialogContentProps) {
   const { onOpenChange } = React.useContext(DialogContext);
 
   return (
     <motion.div
-      variants={modalArcane}
-      initial="initial"
-      animate="animate"
-      exit="exit"
+      initial={{ opacity: 0, scale: 0.9, filter: "blur(4px)" }}
+      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, scale: 0.95, filter: "blur(2px)" }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className={cn(
         "fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border border-gold-500/40 bg-dark-300 p-6 shadow-arcane rounded-lg",
         className
       )}
-      {...props}
     >
       {children}
       <button
