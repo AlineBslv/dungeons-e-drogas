@@ -1,7 +1,47 @@
 const admin = require("firebase-admin");
 const { generateEmbedding, cosineSimilarity } = require("../services/embeddingService");
+const { generateRAGResponse, retrieveRelevantChunks } = require("../services/ragService");
 
 const db = admin.firestore();
+
+/**
+ * Consulta com RAG (Retrieval Augmented Generation)
+ * POST /search/rag
+ * Body: { query: string, tipo?: string, maxChunks?: number, temperature?: number }
+ */
+async function ragQuery(req, res) {
+  try {
+    const { query, tipo, maxChunks = 5, temperature = 0.3, language = "pt-BR" } = req.body;
+
+    if (!query || query.trim().length === 0) {
+      return res.status(400).json({ error: "Query ausente ou vazia." });
+    }
+
+    console.log(`\n🔮 RAG Query: "${query}"\n`);
+
+    const response = await generateRAGResponse(query, {
+      tipo,
+      maxChunks,
+      temperature,
+      includeContext: false,
+      language
+    });
+
+    res.json({
+      success: true,
+      query,
+      ...response
+    });
+
+  } catch (error) {
+    console.error("Erro na consulta RAG:", error);
+    res.status(500).json({
+      success: false,
+      error: "Falha na consulta RAG.",
+      details: error.message
+    });
+  }
+}
 
 /**
  * Busca semântica nos chunks de manuais
@@ -87,6 +127,45 @@ async function semanticSearch(req, res) {
   }
 }
 
+/**
+ * Retrieve chunks (apenas busca, sem geração)
+ * POST /search/retrieve
+ * Body: { query: string, tipo?: string, limit?: number, minScore?: number }
+ */
+async function retrieveChunks(req, res) {
+  try {
+    const { query, tipo, limit = 5, minScore = 0.6 } = req.body;
+
+    if (!query || query.trim().length === 0) {
+      return res.status(400).json({ error: "Query ausente ou vazia." });
+    }
+
+    const chunks = await retrieveRelevantChunks(query, {
+      tipo,
+      limit,
+      minScore,
+      includeMetadata: true
+    });
+
+    res.json({
+      success: true,
+      query,
+      totalFound: chunks.length,
+      chunks
+    });
+
+  } catch (error) {
+    console.error("Erro no retrieve:", error);
+    res.status(500).json({
+      success: false,
+      error: "Falha no retrieve de chunks.",
+      details: error.message
+    });
+  }
+}
+
 module.exports = {
-  semanticSearch
+  semanticSearch,
+  ragQuery,
+  retrieveChunks
 };

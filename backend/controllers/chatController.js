@@ -1,9 +1,11 @@
 const db = require("../firebaseAdmin.js");
 const { askGemini } = require("../services/geminiService.js");
+const { enhanceDrogonWithRAG } = require("../services/ragService.js");
 
 /**
  * Endpoint: POST /chat/send
  * Recebe mensagem do usuário, consulta IA e salva no Firestore
+ * Agora com integração RAG para consultas sobre regras D&D
  */
 async function sendMessage(req, res) {
   try {
@@ -55,10 +57,23 @@ async function sendMessage(req, res) {
       language: campaignData.context?.language || 'pt-BR',
     };
 
-    // 5️⃣ Recebe resposta da IA
+    // 5️⃣ Verifica se deve usar RAG (consulta de regras)
+    const ragEnhancement = await enhanceDrogonWithRAG(message, campaignId, context);
+
+    // Se RAG foi ativado, adiciona o conhecimento ao contexto
+    if (ragEnhancement.useRAG && ragEnhancement.ragData) {
+      console.log(`✨ RAG ativado! Confiança: ${ragEnhancement.ragData.confidence}`);
+
+      // Adiciona informações RAG ao contexto
+      context.ragAnswer = ragEnhancement.ragData.answer;
+      context.ragSources = ragEnhancement.ragData.sources;
+      context.ragConfidence = ragEnhancement.ragData.confidence;
+    }
+
+    // 6️⃣ Recebe resposta da IA (agora enriquecida com RAG se aplicável)
     const aiResponse = await askGemini(message, context);
 
-    // 6️⃣ Salva no Firestore (batch write para atomicidade)
+    // 7️⃣ Salva no Firestore (batch write para atomicidade)
     const batch = db.batch();
 
     const userMsgRef = db.collection("messages").doc();
@@ -76,16 +91,23 @@ async function sendMessage(req, res) {
       sender: "ai",
       content: aiResponse.output,
       createdAt: new Date(),
+      // Metadados RAG se disponíveis
+      ragUsed: ragEnhancement.useRAG || false,
+      ragConfidence: ragEnhancement.ragData?.confidence || null,
+      ragSources: ragEnhancement.ragData?.sources || null,
     });
 
     await batch.commit();
 
-    // 7️⃣ Retorna resposta
+    // 8️⃣ Retorna resposta
     return res.json({
       from: "ai",
       response: aiResponse.output,
       campaignId,
       timestamp: new Date().toISOString(),
+      ragUsed: ragEnhancement.useRAG || false,
+      ragConfidence: ragEnhancement.ragData?.confidence || null,
+      ragSources: ragEnhancement.ragData?.sources || null,
     });
   } catch (err) {
     console.error("❌ Erro em /chat/send:", err);

@@ -329,19 +329,27 @@
 ## ⏳ FUNCIONALIDADES PENDENTES
 
 ### Fase 6: Embeddings & Semantic Search (8-9 meses)
-**Status:** ⏳ **PENDENTE**
+**Status:** ✅ **COMPLETO (95%)**
 
-**Tarefas:**
-- [ ] Implementar Pinecone ou Firestore Vector Search
-- [ ] Indexar PDFs de D&D com embeddings
-- [ ] Sistema de RAG (Retrieval Augmented Generation)
-- [ ] Busca semântica em regras oficiais
-- [ ] Cache de embeddings para otimização
-- [ ] Interface de consulta de regras para Mestre
-- [ ] Citações de fonte nas respostas da IA
-- [ ] Atualização automática da base de conhecimento
+**Tarefas Concluídas:**
+- ✅ Implementar Firestore Vector Search (cosine similarity)
+- ✅ Indexar PDFs de D&D com embeddings
+- ✅ Sistema de RAG (Retrieval Augmented Generation)
+- ✅ Busca semântica em regras oficiais
+- ✅ Interface de consulta de regras para Mestre
+- ✅ Citações de fonte nas respostas da IA
+- ✅ Integração automática no chat do Drogon
+- ✅ Script de indexação automatizado
+- ✅ Smart chunking com overlap
+- ✅ Metadados estruturados (capítulos, seções)
 
-**Impacto:** Permitirá ao Drogon referenciar regras oficiais com precisão
+**Pendente:**
+- ⏳ Cache de embeddings (Redis)
+- ⏳ Indexação do PHB e MM (apenas DMG indexado)
+
+**Impacto:** ✅ Drogon agora referencia regras oficiais com precisão e cita fontes
+
+**Documentação:** [RAG_SYSTEM.md](docs/RAG_SYSTEM.md)
 
 ---
 
@@ -434,11 +442,11 @@
 | **Fase 3:** Personalização Drogon (3-4 meses) | ✅ | 100% | ✅ Completo |
 | **Fase 4:** Jogador & Sessões (4-6 meses) | ✅ | 100% | ✅ Completo |
 | **Fase 5:** Campanhas Narrativas (6-8 meses) | 🔄 | 60% | 2 meses |
-| **Fase 6:** Embeddings & Consultas (8-9 meses) | ⏳ | 30% | 3 meses |
+| **Fase 6:** Embeddings & Consultas (8-9 meses) | ✅ | 95% | ✅ Completo |
 | **Fase 7:** Experiência Sensorial (9-11 meses) | ⏳ | 0% | 4 meses |
 | **Fase 8:** MVP Completo Jogador (11-12 meses) | 🔄 | 70% | 2 meses |
 
-**Progresso Geral:** 75% (9 de 12 meses de roadmap)
+**Progresso Geral:** 82% (10 de 12 meses de roadmap)
 
 ---
 
