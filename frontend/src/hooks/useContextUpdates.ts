@@ -53,7 +53,7 @@ export function useContextUpdates(): UseContextUpdatesReturn {
     setIsApplying(true);
     try {
       // Atualiza o contexto no Firestore
-      await updateCampaignContext(preview);
+      await updateCampaignContext(preview as Partial<CampaignContext>);
 
       // Emite evento via Socket.io para todos os jogadores
       if (typeof window !== 'undefined' && (window as any).socket) {

@@ -12,6 +12,7 @@ import {
 } from "@/lib/firestore-helpers";
 import { CharacterForm } from "@/components/character/CharacterForm";
 import { CharacterSheetView } from "@/components/character/CharacterSheet";
+import { CharacterCardSkeleton } from "@/components/ui/character-card-skeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlusCircle, Loader2 } from "lucide-react";
@@ -20,6 +21,7 @@ import { motion } from "framer-motion";
 import { staggerContainer, staggerItem } from "@/lib/motion-presets";
 import GlobalDiceButton from "@/components/dice/GlobalDiceButton";
 import { toast } from "sonner";
+import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
 
 type ViewMode = "list" | "create" | "edit" | "view";
 
@@ -33,6 +35,8 @@ export default function CharactersPage() {
   const [selectedCharacter, setSelectedCharacter] = useState<
     (CharacterSheet & { id: string }) | null
   >(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [characterToDelete, setCharacterToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -104,16 +108,22 @@ export default function CharactersPage() {
     }
   };
 
-  const handleDeleteCharacter = async (characterId: string) => {
-    if (!confirm("Tem certeza que deseja deletar este personagem? Esta ação não pode ser desfeita.")) {
-      return;
-    }
+  const handleDeleteCharacterClick = (characterId: string) => {
+    setCharacterToDelete(characterId);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDeleteCharacter = async () => {
+    if (!characterToDelete) return;
 
     try {
-      await deleteCharacterSheet(characterId);
+      await deleteCharacterSheet(characterToDelete);
       await loadCharacters();
       setViewMode("list");
       setSelectedCharacter(null);
+      setShowDeleteDialog(false);
+      setCharacterToDelete(null);
+      toast.success("Personagem excluído com sucesso");
     } catch (error) {
       console.error("Erro ao deletar personagem:", error);
       toast.error("Erro ao deletar personagem. Tente novamente.");
@@ -192,15 +202,17 @@ export default function CharactersPage() {
           <CharacterSheetView
             character={selectedCharacter}
             onEdit={() => handleEditCharacter(selectedCharacter)}
-            onDelete={() => handleDeleteCharacter(selectedCharacter.id)}
+            onDelete={() => handleDeleteCharacterClick(selectedCharacter.id)}
           />
         )}
 
         {viewMode === "list" && (
           <>
             {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-gold-500" />
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <CharacterCardSkeleton key={i} />
+                ))}
               </div>
             ) : characters.length === 0 ? (
               <Card className="border-gold-500/40">
@@ -244,6 +256,16 @@ export default function CharactersPage() {
           </>
         )}
       </div>
+
+      {/* Dialog de Confirmação de Exclusão */}
+      <DeleteConfirmationDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleConfirmDeleteCharacter}
+        title="Excluir Personagem"
+        description="Tem certeza que deseja excluir este personagem? Esta ação não pode ser desfeita e todos os dados do personagem serão perdidos permanentemente."
+        itemName={characters.find(c => c.id === characterToDelete)?.name}
+      />
 
       {/* Botão Flutuante de Dados Global */}
       <GlobalDiceButton />

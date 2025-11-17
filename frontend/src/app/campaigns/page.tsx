@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { getUserCampaigns, joinCampaignByCode, Campaign } from '@/lib/firestore-helpers';
 import { CreateCampaignDialog } from '@/components/campaign/CreateCampaignDialog';
+import { CampaignCardSkeleton } from '@/components/ui/campaign-card-skeleton';
 import { toast } from 'sonner';
 import { Timestamp } from 'firebase/firestore';
 
@@ -107,12 +108,34 @@ export default function CampaignsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <GiCastle className="w-20 h-20 text-primary mx-auto mb-4 animate-pulse text-glow-gold" />
-          <p className="text-muted-foreground font-lore">Carregando campanhas...</p>
+      <main className="min-h-screen p-8">
+        {/* Header Skeleton */}
+        <div className="max-w-7xl mx-auto mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <GiCastle className="w-12 h-12 text-primary/50 animate-pulse" />
+                <div className="h-10 w-48 bg-primary/10 rounded animate-pulse" />
+              </div>
+              <div className="h-5 w-96 bg-primary/10 rounded animate-pulse mt-2" />
+            </div>
+            <div className="flex gap-3">
+              <div className="h-10 w-40 bg-primary/10 rounded animate-pulse" />
+              <div className="h-10 w-40 bg-primary/10 rounded animate-pulse" />
+            </div>
+          </div>
         </div>
-      </div>
+
+        {/* Campaigns Grid Skeleton */}
+        <div className="max-w-7xl mx-auto">
+          <div className="h-8 w-64 bg-primary/10 rounded animate-pulse mb-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <CampaignCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </main>
     );
   }
 

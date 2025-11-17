@@ -35,6 +35,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog';
+import { CampaignDetailSkeleton } from '@/components/ui/campaign-detail-skeleton';
 import {
   getCampaign,
   Campaign,
@@ -75,6 +77,8 @@ export default function CampaignDetailPage() {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(0);
   const [messageCount, setMessageCount] = useState(0);
+  const [showRemovePlayerDialog, setShowRemovePlayerDialog] = useState(false);
+  const [playerToRemove, setPlayerToRemove] = useState<string | null>(null);
 
   const isMaster = campaign?.master_uid === user?.uid;
 
@@ -233,12 +237,19 @@ export default function CampaignDetailPage() {
     toast.success('Código copiado!');
   };
 
-  const handleRemovePlayer = async (playerUid: string) => {
-    if (!campaign) return;
+  const handleRemovePlayerClick = (playerUid: string) => {
+    setPlayerToRemove(playerUid);
+    setShowRemovePlayerDialog(true);
+  };
+
+  const handleConfirmRemovePlayer = async () => {
+    if (!campaign || !playerToRemove) return;
 
     try {
-      await removePlayerFromCampaign(campaign.id, playerUid);
+      await removePlayerFromCampaign(campaign.id, playerToRemove);
       toast.success('Jogador removido');
+      setShowRemovePlayerDialog(false);
+      setPlayerToRemove(null);
     } catch (error) {
       console.error('Erro ao remover jogador:', error);
       toast.error('Erro ao remover jogador');
@@ -257,14 +268,7 @@ export default function CampaignDetailPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <GiCastle className="w-20 h-20 text-primary mx-auto mb-4 animate-pulse text-glow-gold" />
-          <p className="text-muted-foreground font-lore">Carregando campanha...</p>
-        </div>
-      </div>
-    );
+    return <CampaignDetailSkeleton />;
   }
 
   if (!campaign) {
@@ -503,7 +507,7 @@ export default function CampaignDetailPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleRemovePlayer(playerUid)}
+                          onClick={() => handleRemovePlayerClick(playerUid)}
                           className="text-red-500 hover:text-red-400"
                         >
                           <FaUserMinus />
@@ -581,6 +585,15 @@ export default function CampaignDetailPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Dialog de Confirmação de Remoção de Jogador */}
+      <DeleteConfirmationDialog
+        open={showRemovePlayerDialog}
+        onOpenChange={setShowRemovePlayerDialog}
+        onConfirm={handleConfirmRemovePlayer}
+        title="Remover Jogador"
+        description="Tem certeza que deseja remover este jogador da campanha? O jogador precisará usar o código de convite novamente para voltar."
+      />
 
       {/* Botão Flutuante de Dados Integrado ao Chat */}
       <CampaignDiceButton campaignId={campaign.id} isMaster={isMaster} />
