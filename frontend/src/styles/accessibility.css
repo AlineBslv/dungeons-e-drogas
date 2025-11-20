@@ -1,0 +1,154 @@
+/**
+ * Accessibility Utilities
+ * Padrões WCAG 2.1 Level AA/AAA
+ * Pure CSS - Sem @apply para compatibilidade com Tailwind v4
+ */
+
+/* ==========================================
+   TOUCH TARGETS (WCAG 2.5.5)
+   ========================================== */
+
+/**
+ * Touch Target Mínimo: 44x44px (WCAG 2.5.5 Level AAA)
+ * Exceções: Links inline em parágrafos
+ */
+.touch-target {
+  min-height: 2.75rem; /* 44px */
+  min-width: 2.75rem; /* 44px */
+}
+
+.touch-target-sm {
+  min-height: 2.5rem; /* 40px - Level AA aceitável */
+  min-width: 2.5rem; /* 40px */
+}
+
+.touch-target-lg {
+  min-height: 3rem; /* 48px */
+  min-width: 3rem; /* 48px */
+}
+
+/**
+ * Utility para garantir área clicável maior que o elemento visual
+ * Usa ::before pseudo-element para expandir a área de toque
+ */
+.touch-expand {
+  position: relative;
+}
+
+.touch-expand::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
+  /* Debug: descomente para visualizar área de toque */
+  /* background: rgba(255, 0, 0, 0.2); */
+}
+
+/* ==========================================
+   SPACING (WCAG 1.4.12)
+   ========================================== */
+
+/**
+ * Espaçamento mínimo entre elementos interativos
+ * 8px mínimo recomendado
+ */
+.interactive-spacing > * + * {
+  margin-top: 0.5rem; /* 8px */
+}
+
+.interactive-spacing-lg > * + * {
+  margin-top: 0.75rem; /* 12px */
+}
+
+/* ==========================================
+   MOTION (WCAG 2.3.3)
+   ========================================== */
+
+/**
+ * Respeita preferência de movimento reduzido
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================
+   SKIP LINKS
+   ========================================== */
+
+/**
+ * Skip to content link (WCAG 2.4.1)
+ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 0.5rem 1rem;
+  z-index: 50;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ==========================================
+   SCREEN READER ONLY
+   ========================================== */
+
+/**
+ * Visualmente oculto mas acessível para screen readers
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ==========================================
+   HIGH CONTRAST MODE
+   ========================================== */
+
+/**
+ * Suporte para Windows High Contrast Mode
+ */
+@media (prefers-contrast: high) {
+  .button,
+  button {
+    border: 2px solid currentColor;
+  }
+}
+
+/*
+ * NOTA: Classes de validação de formulário e focus indicators
+ * são implementadas diretamente nos componentes usando Tailwind utilities
+ * para evitar problemas com @apply
+ *
+ * Exemplo de uso:
+ * - Focus: className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+ * - Error: className="border-red-500 focus-visible:ring-red-500"
+ */

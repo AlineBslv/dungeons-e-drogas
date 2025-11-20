@@ -29,12 +29,29 @@ yarn-error.log*
 .pnpm-debug.log*
 lerna-debug.log*
 
-# Local env files
+# Local env files - NEVER commit actual credentials
 .env
-.env*.local
+.env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
+.env.staging
+.env*.local
+
+# Allow example/template files only
+!.env.local.example
+!.env.production.example
+!.env.development.example
+
+# Secrets and sensitive files
+SECRETS_QUICK_GUIDE.md
+add-secrets.sh
+*.key
+*.pem
+service-account*.json
 
 # Vercel
 .vercel
@@ -133,3 +150,4 @@ public
 # Temporary folders
 tmp/
 temp/
+mcp.json

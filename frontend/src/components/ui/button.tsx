@@ -5,26 +5,30 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium font-ui transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-55 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "bg-primary text-primary-foreground shadow hover:shadow-glow hover:-translate-y-0.5 active:translate-y-0 active:shadow",
+        drogon:
+          "bg-primary text-primary-foreground font-semibold shadow-md hover:shadow-glow-intense hover:-translate-y-1 active:translate-y-0 active:shadow-md [background:linear-gradient(135deg,#C5A75B_0%,#B89E58_100%)]",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-dark-500/80 hover:border-gold-300 border border-border active:bg-dark-500 active:scale-95",
+        destructive:
+          "bg-ruby text-text-primary shadow-sm hover:bg-ruby/90 hover:shadow-[0_0_10px_rgba(118,43,40,0.5)] active:bg-ruby/80 active:scale-95",
+        outline:
+          "border border-border bg-transparent shadow-sm hover:bg-primary/10 hover:border-primary hover:text-primary active:bg-primary/5 active:scale-95",
+        ghost: "hover:bg-accent hover:text-accent-foreground active:bg-accent/80 active:scale-95",
+        link: "text-gold-500 underline-offset-4 hover:underline hover:text-gold-300 active:text-gold-400",
+        arcane:
+          "bg-arcane text-text-primary shadow-arcane hover:shadow-[0_0_20px_rgba(58,74,99,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-arcane",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        default: "h-11 px-4 py-2", // 44px - WCAG 2.5.5 compliant
+        sm: "h-10 rounded-md px-3 text-xs", // 40px - Level AA aceitável
+        lg: "h-12 rounded-md px-8 text-base", // 48px
+        icon: "h-11 w-11", // 44px - Touch target mínimo
       },
     },
     defaultVariants: {

@@ -1,0 +1,31 @@
+{
+  "colors": {
+    "dark": {
+      "100": "#0C0B09",
+      "300": "#181511",
+      "500": "#221E1A"
+    },
+    "gold": {
+      "300": "#B89E58",
+      "500": "#C5A75B"
+    },
+    "text": {
+      "primary": "#EDE9E2",
+      "secondary": "#B0ADA7"
+    },
+    "ruby": "#762B28",
+    "emerald": "#3E775A",
+    "arcane": "#3A4A63",
+    "border": "#38322C"
+  },
+  "shadows": {
+    "glow": "0 0 15px rgba(197, 167, 91, 0.5)",
+    "glow-intense": "0 0 25px rgba(197, 167, 91, 0.7)",
+    "arcane": "0 4px 20px rgba(58, 74, 99, 0.4)"
+  },
+  "spacing": {
+    "chat-padding": "1rem",
+    "panel-padding": "1.5rem",
+    "card-radius": "0.75rem"
+  }
+}

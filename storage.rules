@@ -1,0 +1,171 @@
+rules_version = '2';
+
+/**
+ * Firebase Storage Security Rules - Dungeons e Drogas
+ *
+ * Estrutura de pastas:
+ * - /pdfs/{fileId} - PDFs da base cognitiva (D&D books)
+ * - /text/{fileId} - Textos extraídos (OCR)
+ * - /uploads/{userId}/{fileId} - Uploads de usuários
+ * - /campaign_assets/{campaignId}/{fileId} - Assets de campanhas (mapas, imagens)
+ * - /character_portraits/{userId}/{fileId} - Retratos de personagens
+ */
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isMaster() {
+      return isAuthenticated() &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.tier == 'mestre';
+    }
+
+    function isCampaignMaster(campaignId) {
+      return isAuthenticated() &&
+             firestore.get(/databases/(default)/documents/campaigns/$(campaignId)).data.master_uid == request.auth.uid;
+    }
+
+    function isCampaignPlayer(campaignId) {
+      return isAuthenticated() &&
+             request.auth.uid in firestore.get(/databases/(default)/documents/campaigns/$(campaignId)).data.players;
+    }
+
+    function hasCampaignAccess(campaignId) {
+      return isCampaignMaster(campaignId) || isCampaignPlayer(campaignId);
+    }
+
+    // Validação de tamanho de arquivo (máximo 50MB)
+    function validFileSize() {
+      return request.resource.size < 50 * 1024 * 1024;
+    }
+
+    // Validação de tipo de arquivo PDF
+    function isPDF() {
+      return request.resource.contentType == 'application/pdf';
+    }
+
+    // Validação de tipo de arquivo de imagem
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // Validação de tipo de arquivo de texto
+    function isText() {
+      return request.resource.contentType.matches('text/.*');
+    }
+
+    // ============================================
+    // PDFs - Base Cognitiva D&D
+    // ============================================
+    match /pdfs/{fileId} {
+      // Leitura: todos os usuários autenticados
+      allow read: if isAuthenticated();
+
+      // Upload: apenas mestres podem adicionar PDFs
+      allow create: if isMaster() && isPDF() && validFileSize();
+
+      // Atualização: apenas mestres
+      allow update: if isMaster() && isPDF() && validFileSize();
+
+      // Deleção: apenas mestres
+      allow delete: if isMaster();
+    }
+
+    // ============================================
+    // TEXTS - Textos extraídos (OCR)
+    // ============================================
+    match /text/{fileId} {
+      // Leitura: todos os usuários autenticados
+      allow read: if isAuthenticated();
+
+      // Upload/Atualização: apenas mestres (gerados pelo OCR)
+      allow create, update: if isMaster() && isText() && validFileSize();
+
+      // Deleção: apenas mestres
+      allow delete: if isMaster();
+    }
+
+    // ============================================
+    // UPLOADS - Arquivos gerais de usuários
+    // ============================================
+    match /uploads/{userId}/{fileId} {
+      // Leitura: apenas o dono
+      allow read: if isOwner(userId);
+
+      // Upload: apenas o próprio usuário
+      allow create: if isOwner(userId) && validFileSize();
+
+      // Atualização: apenas o dono
+      allow update: if isOwner(userId) && validFileSize();
+
+      // Deleção: apenas o dono
+      allow delete: if isOwner(userId);
+    }
+
+    // ============================================
+    // CAMPAIGN ASSETS - Mapas, imagens de campanhas
+    // ============================================
+    match /campaign_assets/{campaignId}/{fileId} {
+      // Leitura: todos os participantes da campanha
+      allow read: if hasCampaignAccess(campaignId);
+
+      // Upload: apenas o mestre da campanha
+      allow create: if isCampaignMaster(campaignId) && isImage() && validFileSize();
+
+      // Atualização: apenas o mestre da campanha
+      allow update: if isCampaignMaster(campaignId) && isImage() && validFileSize();
+
+      // Deleção: apenas o mestre da campanha
+      allow delete: if isCampaignMaster(campaignId);
+    }
+
+    // ============================================
+    // CHARACTER PORTRAITS - Retratos de personagens
+    // ============================================
+    match /character_portraits/{userId}/{fileId} {
+      // Leitura: público (para exibir em sessões)
+      allow read: if isAuthenticated();
+
+      // Upload: apenas o próprio usuário
+      allow create: if isOwner(userId) && isImage() && validFileSize();
+
+      // Atualização: apenas o dono
+      allow update: if isOwner(userId) && isImage() && validFileSize();
+
+      // Deleção: apenas o dono
+      allow delete: if isOwner(userId);
+    }
+
+    // ============================================
+    // SESSION EXPORTS - PDFs exportados de sessões
+    // ============================================
+    match /session_exports/{campaignId}/{fileId} {
+      // Leitura: participantes da campanha
+      allow read: if hasCampaignAccess(campaignId);
+
+      // Criação: apenas o mestre (ao exportar)
+      allow create: if isCampaignMaster(campaignId) && isPDF() && validFileSize();
+
+      // Deleção: apenas o mestre
+      allow delete: if isCampaignMaster(campaignId);
+    }
+
+    // ============================================
+    // DEFAULT: DENY ALL
+    // ============================================
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

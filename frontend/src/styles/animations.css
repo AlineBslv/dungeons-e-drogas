@@ -1,0 +1,215 @@
+/**
+ * Dungeons & Drogas - Animations & Microinteractions
+ * Seção 6 do ROADMAP - Motion UX
+ */
+
+@layer utilities {
+  /* Glow Effect - Aura dourada em hover */
+  .glow-gold {
+    box-shadow: 0 0 15px rgba(197, 167, 91, 0.5);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .glow-gold-intense {
+    box-shadow: 0 0 25px rgba(197, 167, 91, 0.7);
+  }
+
+  /* Pulse Animation - Respiração dourada */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(197, 167, 91, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(197, 167, 91, 0.6);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Rune Glow - Brilho rúnico */
+  @keyframes rune-glow {
+    0%, 100% {
+      opacity: 0.6;
+      text-shadow: 0 0 5px rgba(197, 167, 91, 0.5);
+    }
+    50% {
+      opacity: 1;
+      text-shadow: 0 0 15px rgba(197, 167, 91, 0.8);
+    }
+  }
+
+  .animate-rune-glow {
+    animation: rune-glow 3s ease-in-out infinite;
+  }
+
+  /* Fade In - Aparição suave */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  /* Slide In from Left */
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-in-left {
+    animation: slide-in-left 0.4s ease-out;
+  }
+
+  /* Slide In from Right */
+  @keyframes slide-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right 0.4s ease-out;
+  }
+
+  /* Dice Roll - Rotação 360° */
+  @keyframes dice-roll {
+    0% {
+      transform: rotate(0deg) scale(1);
+    }
+    50% {
+      transform: rotate(180deg) scale(1.2);
+    }
+    100% {
+      transform: rotate(360deg) scale(1);
+    }
+  }
+
+  .animate-dice-roll {
+    animation: dice-roll 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  /* Fire Flicker - Tremulação de fogo */
+  @keyframes fire-flicker {
+    0%, 100% {
+      opacity: 1;
+      filter: brightness(1);
+    }
+    25% {
+      opacity: 0.9;
+      filter: brightness(1.1);
+    }
+    50% {
+      opacity: 0.95;
+      filter: brightness(0.95);
+    }
+    75% {
+      opacity: 0.92;
+      filter: brightness(1.05);
+    }
+  }
+
+  .animate-fire-flicker {
+    animation: fire-flicker 2.5s ease-in-out infinite;
+  }
+
+  /* Arcane Shimmer - Brilho arcano */
+  @keyframes arcane-shimmer {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-arcane-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(58, 74, 99, 0.3),
+      rgba(197, 167, 91, 0.3),
+      rgba(58, 74, 99, 0.3)
+    );
+    background-size: 200% 200%;
+    animation: arcane-shimmer 3s ease infinite;
+  }
+
+  /* Bounce Subtle - Bounce suave */
+  @keyframes bounce-subtle {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 0.6s ease;
+  }
+
+  /* Hover Effects */
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Typing Indicator Dots */
+  @keyframes typing-dot {
+    0%, 60%, 100% {
+      transform: translateY(0);
+      opacity: 0.4;
+    }
+    30% {
+      transform: translateY(-8px);
+      opacity: 1;
+    }
+  }
+
+  .typing-dot {
+    animation: typing-dot 1.4s infinite ease-in-out;
+  }
+
+  .typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,38 @@
+name: Deploy to Firebase
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Backend to Firebase Functions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: =å Checkout code
+        uses: actions/checkout@v4
+
+      - name: =â Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: =æ Install dependencies (backend)
+        working-directory: ./backend
+        run: npm ci
+
+      - name: =% Install Firebase Tools
+        run: npm install -g firebase-tools
+
+      - name: =€ Deploy to Firebase Functions
+        working-directory: ./backend
+        run: firebase deploy --only functions --token ${{ secrets.FIREBASE_TOKEN }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name:  Deployment successful
+        run: |
+          echo "<‰ Backend deployed to Firebase Functions!"
+          echo "= Check your Firebase Console for the deployment URL"
